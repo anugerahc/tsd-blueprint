@@ -145,6 +145,12 @@ terinstall keduanya read-only buat keperluan generate TSD sehari-hari, lihat atu
 - `.callout` + modifier: `.warn` (perhatian netral), `.danger` (dipakai buat ROI item lama —
   pertimbangkan ganti ke `.roi` biar konsisten tone-nya kalem), `.roi` (Room of Improvement,
   warna beda dari danger, tone lebih tenang), `.ok` (klarifikasi/update positif dari analisis awal).
+  **`.callout` WAJIB dipakai sebagai block-level element sendiri (`<div class="callout ...">`),
+  JANGAN PERNAH di-inline di tengah kalimat/bullet** (misal `<span class="callout roi"
+  style="display:inline">...</span>` di dalam `<li>`) — CSS-nya didesain buat blok dengan
+  border-left+padding, kalau dipaksa inline hasilnya visual glitch (garis vertikal motong tengah
+  teks). Kalau cuma butuh cross-reference singkat ke item ROI dari dalam kalimat/bullet, cukup
+  tulis plain text: `(lihat ROI §14)` — tanpa class/span apapun.
 - `.badge.get` / `.badge.post` — badge HTTP method di tabel API endpoint.
 
 ## 6. Bahasa & Tone
