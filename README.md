@@ -12,6 +12,7 @@ template/                    ← scaffold TSD siap pakai (html/css/js, interakti
 adapters/                    ← file aktivasi per tool (Claude Code, Antigravity, Kiro, Cursor, Codex)
 install.sh / install.ps1     ← installer otomatis, deteksi tool & pasang adapter yang cocok
 INSTALL.md                   ← panduan instalasi manual (kalau gak mau pakai script)
+PROMPTS.md                   ← contoh prompt optimal buat hasil generate TSD paling maksimal
 ```
 
 ## Quick start
@@ -38,7 +39,8 @@ INSTALL.md                   ← panduan instalasi manual (kalau gak mau pakai s
    ```
    → tab **Installed**, cari `tsd-blueprint` — pastikan skill `tsd-blueprint` kelihatan di component inventory-nya.
 6. Selesai. Skill otomatis aktif — tinggal minta di chat: *"buatkan TSD untuk module X"*, atau
-   panggil eksplisit dengan `/tsd-blueprint:tsd-blueprint`.
+   panggil eksplisit dengan `/tsd-blueprint:tsd-blueprint`. Buat hasil paling maksimal, pakai
+   template prompt di [PROMPTS.md](PROMPTS.md) — bukan asal sebut nama module doang.
 
 Gak perlu clone repo atau copy file manual sama sekali — plugin sudah bundle `core/` +
 `template/`-nya sendiri.
