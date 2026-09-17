@@ -1,0 +1,18 @@
+---
+description: Metodologi generate Technical Spec Document (TSD) per-module dari source code + live DB verification. Aktif saat user minta TSD/dokumentasi teknis module tertentu.
+alwaysApply: false
+---
+
+# TSD Blueprint
+
+Baca `_blueprint/core/tsd-blueprint-core.md` (root project) dulu sebelum eksekusi — itu sumber
+kebenaran metodologi (aturan verifikasi, struktur 16 section, tone ROI, alur investigasi).
+
+Ringkasan cepat:
+- Wajib verifikasi tiap klaim dari source code + live DB query, dilarang menebak.
+- Pakai scaffold `_blueprint/template/` (html/css/js generic, sudah ada lightbox/copy-markdown/
+  print/scroll-reveal) — isi placeholder saja.
+- Gap terverifikasi → section "Room of Improvement (ROI)", tone tenang + rekomendasi konkret,
+  bukan "Bug"/alarm.
+- Jangan narasikan proses trial-error investigasi sendiri di dalam dokumen final.
+- Module/project ambigu → tanya user dulu, jangan asumsi.

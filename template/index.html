@@ -1,0 +1,254 @@
+<title>TSD {{MODULE_NAME}} — {{PROJECT_NAME}}</title>
+<meta charset="UTF-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<link rel="stylesheet" href="css/style.css" />
+
+<!--
+  TSD BLUEPRINT SCAFFOLD — jangan hapus/ubah struktur class (.diagram-card, .callout, .table-wrap,
+  .num, sidebar .toc) karena js/script.js dan css/style.css bergantung ke class ini untuk lightbox,
+  scroll-spy, copy-as-markdown, dan print. Cukup isi {{PLACEHOLDER}} dan tambah/kurangi <section>
+  sesuai kebutuhan module. Metodologi lengkap: ../core/tsd-blueprint-core.md
+-->
+
+<button class="menu-toggle" aria-label="Toggle menu">☰</button>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="doc-tag">Technical Spec Document</div>
+      <h1>{{MODULE_NAME}} — {{PROJECT_NAME}}</h1>
+      <div class="sub">Module: {{MODULE_SUBTITLE}}</div>
+    </div>
+    <ul class="toc">
+      <li><a href="#riwayat"><span class="num">00</span>Riwayat Revisi</a></li>
+      <li><a href="#latar-belakang"><span class="num">01</span>Latar Belakang</a></li>
+      <li><a href="#alur-bisnis"><span class="num">02</span>Alur Bisnis</a></li>
+      <li><a href="#input-data"><span class="num">03</span>Input Data</a></li>
+      <li><a href="#validasi"><span class="num">04</span>Business Rule</a></li>
+      <li><a href="#code-queries"><span class="num">05</span>Query dari Kode</a></li>
+      <li><a href="#api"><span class="num">06</span>API Endpoint</a></li>
+      <li><a href="#notifikasi"><span class="num">07</span>Notifikasi</a></li>
+      <li><a href="#tech-spec"><span class="num">08</span>Tech Spec &amp; RBAC</a></li>
+      <li><a href="#database"><span class="num">09</span>Database / ERD</a></li>
+      <li><a href="#integrasi"><span class="num">10</span>Integrasi Eksternal</a></li>
+      <li><a href="#field-dictionary"><span class="num">11</span>Field Dictionary</a></li>
+      <li><a href="#tombol"><span class="num">12</span>Tombol &amp; Perilaku</a></li>
+      <li><a href="#audit"><span class="num">13</span>Audit &amp; Access</a></li>
+      <li><a href="#gap"><span class="num">14</span>Room of Improvement</a></li>
+      <li><a href="#appendix"><span class="num">15</span>Koneksi Database</a></li>
+    </ul>
+  </aside>
+
+  <main class="main">
+
+    <div class="cover">
+      <div class="doc-tag">Technical Specification Document</div>
+      <h1>{{MODULE_NAME}} — {{MODULE_SUBTITLE}}</h1>
+      <p>Bagian dari sistem <strong>{{PROJECT_NAME}}</strong>, area/namespace <strong>{{NAMESPACE}}</strong>. Dokumen ini disusun dari pembacaan langsung source code (Controller, Service, DAL, Entity, View, JS) — bukan asumsi dari nama fitur.</p>
+      <div class="meta-grid">
+        <div class="meta-item"><div class="k">Nama Project</div><div class="v">{{MODULE_NAME}} ({{PROJECT_NAME}} / {{NAMESPACE}})</div></div>
+        <div class="meta-item"><div class="k">Versi Dokumen</div><div class="v">1.0</div></div>
+        <div class="meta-item"><div class="k">Tanggal</div><div class="v">{{DATE}}</div></div>
+        <div class="meta-item"><div class="k">Disusun Berdasarkan</div><div class="v">Source code aktual (deep-dive)</div></div>
+        <div class="meta-item"><div class="k">Status Dokumen</div><div class="v">Draft — perlu review tim dev</div></div>
+        <div class="meta-item"><div class="k">Database</div><div class="v">{{DATABASE_LIST}}</div></div>
+      </div>
+    </div>
+
+    <section id="riwayat">
+      <h2><span class="num">00</span>Riwayat Revisi</h2>
+      <div class="table-wrap"><table>
+        <tr><th>Versi</th><th>Tanggal</th><th>Perubahan</th><th>Author</th></tr>
+        <tr><td>1.0</td><td>{{DATE}}</td><td>Draft awal TSD hasil reverse-engineering source code module {{MODULE_NAME}}</td><td>{{AUTHOR}}</td></tr>
+      </table></div>
+    </section>
+
+    <section id="latar-belakang">
+      <h2><span class="num">01</span>Latar Belakang &amp; Tujuan</h2>
+      <h3>Business Background</h3>
+      <p>{{BUSINESS_BACKGROUND}}</p>
+      <h3>Business Objectives</h3>
+      <ul>
+        <li>{{OBJECTIVE_1}}</li>
+      </ul>
+      <h3>Project Scope</h3>
+      <p><strong>In-scope (aktif):</strong> {{SCOPE_IN}}</p>
+      <!-- Kalau ada fitur yang kodenya ada tapi UI-nya non-aktif/deprecated, tulis di sini pakai .callout.warn -->
+      <h3>Glossary</h3>
+      <div class="table-wrap"><table>
+        <tr><th>Term</th><th>Definisi</th></tr>
+        <tr><td>{{TERM_1}}</td><td>{{DEFINISI_1}}</td></tr>
+      </table></div>
+    </section>
+
+    <section id="alur-bisnis">
+      <h2><span class="num">02</span>Alur Bisnis / Proses</h2>
+      <h3>Flow Ringkas</h3>
+      <p>{{FLOW_SUMMARY}}</p>
+
+      <div class="diagram-card">
+        <pre class="mermaid">
+flowchart LR
+    A["{{STEP_1}}"] --> B["{{STEP_2}}"]
+    B --> C(["{{END_STATE}}"])
+        </pre>
+        <div class="diagram-caption">{{DIAGRAM_CAPTION}}</div>
+      </div>
+
+      <h3>Status / State Machine</h3>
+      <div class="table-wrap"><table>
+        <tr><th>Code</th><th>Label</th><th>Keterangan</th></tr>
+        <tr><td><code>{{STATUS_CODE}}</code></td><td>{{STATUS_LABEL}}</td><td>{{STATUS_DESC}}</td></tr>
+      </table></div>
+
+      <h3>Transisi &amp; Trigger</h3>
+      <div class="table-wrap"><table>
+        <tr><th>Dari Status</th><th>Aksi</th><th>Ke Status</th><th>Trigger by</th></tr>
+        <tr><td><code>{{FROM}}</code></td><td>{{ACTION}}</td><td><code>{{TO}}</code></td><td>{{ACTOR}}</td></tr>
+      </table></div>
+
+      <h3>Side-effect Setiap Perubahan Status</h3>
+      <ul>
+        <li>{{SIDE_EFFECT_1}}</li>
+      </ul>
+    </section>
+
+    <section id="input-data">
+      <h2><span class="num">03</span>Modul Input Data</h2>
+      <p>{{INPUT_DATA_INTRO}}</p>
+      <h3>Field Input</h3>
+      <ul>
+        <li>{{FIELD_1}}</li>
+      </ul>
+      <h3>Nomor Dokumen (auto-generate)</h3>
+      <p>{{DOC_NUMBER_LOGIC}}</p>
+    </section>
+
+    <section id="validasi">
+      <h2><span class="num">04</span>Modul Validasi / Business Rule</h2>
+      <h3>{{RULE_TITLE_1}}</h3>
+      <p>{{RULE_DESC_1}}</p>
+      <!-- Kalau validasi cuma di client dan server gak re-check, WAJIB pakai .callout.roi di sini -->
+    </section>
+
+    <section id="code-queries">
+      <h2><span class="num">05</span>Query &amp; Business Logic dari Kode</h2>
+      <p>Kutipan langsung dari source code — query LINQ/join asli beserta penjelasannya. Bukan query buat verifikasi TSD ini, tapi query yang beneran jalan di aplikasi produksi/dev.</p>
+
+      <h3>1. {{QUERY_TITLE_1}} — <code>{{METHOD_NAME_1}}()</code></h3>
+      <p>{{QUERY_CONTEXT_1}}</p>
+      <pre><code>{{LINQ_CODE_1}}</code></pre>
+      <p><strong>Penjelasan:</strong> {{QUERY_EXPLANATION_1}}</p>
+      <p><strong>Raw SQL (DB editor, {{DB_NAME_1}}):</strong></p>
+      <pre><code>{{RAW_SQL_1}}</code></pre>
+    </section>
+
+    <section id="api">
+      <h2><span class="num">06</span>API Endpoint Specification</h2>
+      <h3><code>{{CONTROLLER_NAME}}</code> — <code>{{ROUTE_PREFIX}}</code></h3>
+      <div class="table-wrap"><table>
+        <tr><th>Method</th><th>Action</th><th>Parameter</th><th>Return</th><th>Catatan</th></tr>
+        <tr><td><span class="badge post">POST</span></td><td>{{ACTION_NAME}}</td><td>{{PARAM}}</td><td>{{RETURN_TYPE}}</td><td>{{NOTE}}</td></tr>
+      </table></div>
+    </section>
+
+    <section id="notifikasi">
+      <h2><span class="num">07</span>Notifikasi &amp; Template Komunikasi</h2>
+      <p>{{NOTIFICATION_INTRO}}</p>
+      <div class="table-wrap"><table>
+        <tr><th>Trigger</th><th>Kapan</th><th>Penerima</th></tr>
+        <tr><td>{{TRIGGER_1}}</td><td>{{WHEN_1}}</td><td>{{RECIPIENT_1}}</td></tr>
+      </table></div>
+    </section>
+
+    <section id="tech-spec">
+      <h2><span class="num">08</span>Technical Specification</h2>
+      <h3>Technology Stack</h3>
+      <div class="table-wrap"><table>
+        <tr><th>Layer</th><th>Teknologi</th></tr>
+        <tr><td>{{LAYER}}</td><td>{{TECH}}</td></tr>
+      </table></div>
+      <h3>RBAC Matrix</h3>
+      <div class="table-wrap"><table>
+        <tr><th>Layer</th><th>Sumber</th><th>Granularitas</th><th>Enforcement</th></tr>
+        <tr><td>{{RBAC_LAYER}}</td><td>{{RBAC_SOURCE}}</td><td>{{RBAC_GRAIN}}</td><td>{{RBAC_ENFORCEMENT}}</td></tr>
+      </table></div>
+    </section>
+
+    <section id="database">
+      <h2><span class="num">09</span>Database Architecture (ERD)</h2>
+      <p>{{ERD_INTRO}} — kolom &amp; FK constraint di bawah live-verified langsung dari database, bukan cuma dibaca dari ModelBuilder/migration.</p>
+      <div class="diagram-card">
+        <pre class="mermaid">
+erDiagram
+    {{ENTITY_1}} ||--o{ {{ENTITY_2}} : "{{RELATION}}"
+        </pre>
+        <div class="diagram-caption">{{ERD_CAPTION}}</div>
+      </div>
+      <h3>Definisi View / Stored Procedure Terkait</h3>
+      <pre><code>{{VIEW_SQL_DEFINITION}}</code></pre>
+    </section>
+
+    <section id="integrasi">
+      <h2><span class="num">10</span>Integrasi Sistem Eksternal</h2>
+      <div class="table-wrap"><table>
+        <tr><th>Sistem</th><th>Tujuan</th><th>Metode</th></tr>
+        <tr><td>{{EXTERNAL_SYSTEM}}</td><td>{{PURPOSE}}</td><td>{{METHOD}}</td></tr>
+      </table></div>
+    </section>
+
+    <section id="field-dictionary">
+      <h2><span class="num">11</span>Field Dictionary</h2>
+      <div class="table-wrap"><table>
+        <tr><th>Field</th><th>Tipe</th><th>Wajib</th><th>Keterangan</th></tr>
+        <tr><td>{{FIELD_NAME}}</td><td>{{FIELD_TYPE}}</td><td>{{FIELD_REQUIRED}}</td><td>{{FIELD_NOTE}}</td></tr>
+      </table></div>
+    </section>
+
+    <section id="tombol">
+      <h2><span class="num">12</span>Tombol Aksi &amp; Perilaku</h2>
+      <div class="table-wrap"><table>
+        <tr><th>Tombol</th><th>Kondisi Muncul</th><th>Perilaku</th></tr>
+        <tr><td>{{BUTTON_NAME}}</td><td>{{BUTTON_CONDITION}}</td><td>{{BUTTON_BEHAVIOR}}</td></tr>
+      </table></div>
+    </section>
+
+    <section id="audit">
+      <h2><span class="num">13</span>Audit Trail &amp; Access</h2>
+      <p>{{AUDIT_DESC}}</p>
+    </section>
+
+    <section id="gap">
+      <h2><span class="num">14</span>Room of Improvement (ROI)</h2>
+      <p>Temuan di bawah semua terverifikasi langsung dari source code {{AND_LIVE_DB_IF_APPLICABLE}} — bukan asumsi. Tiap item disertai rekomendasi konkret.</p>
+
+      <div class="callout roi">
+        <div class="label">ROI — {{ROI_TITLE_1}}</div>
+        {{ROI_DESCRIPTION_1}}<br><br>
+        <strong>Rekomendasi:</strong> {{ROI_RECOMMENDATION_1}}
+      </div>
+    </section>
+
+    <section id="appendix">
+      <h2><span class="num">15</span>Appendix — Koneksi Database</h2>
+      <p>Nama KEY connection string per environment (bukan ciphertext/credential asli) dan cara decrypt-nya.</p>
+      <div class="table-wrap"><table>
+        <tr><th>Context</th><th>Connection String Key</th><th>Database</th></tr>
+        <tr><td>{{CONTEXT_NAME}}</td><td><code>{{CONN_KEY}}</code></td><td>{{DB_TARGET}}</td></tr>
+      </table></div>
+      <p>Method decrypt: <code>{{DECRYPT_METHOD}}</code>.</p>
+    </section>
+
+  </main>
+</div>
+
+<div class="top-actions">
+  <button id="btn-copy-md" title="Copy seluruh dokumen sebagai Markdown"><i class="fa fa-copy"></i> Copy as Markdown</button>
+  <button id="btn-print" title="Print / Save as PDF"><i class="fa fa-print"></i> Print</button>
+  <button id="btn-top" title="Kembali ke atas"><i class="fa fa-arrow-up"></i></button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+<script src="js/script.js"></script>
