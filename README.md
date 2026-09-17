@@ -16,14 +16,37 @@ INSTALL.md                   ← panduan instalasi manual (kalau gak mau pakai s
 
 ## Quick start
 
-**Claude Code** (instalasi resmi via plugin marketplace):
+### Claude Code — install plugin (cara resmi, 1x setup)
 
-```
-/plugin marketplace add anugerahc/tsd-blueprint
-/plugin install tsd-blueprint@tsd-blueprint-marketplace
-```
+1. Buka Claude Code di project mana pun (interactive terminal atau desktop app).
+2. Tambahkan marketplace-nya:
+   ```
+   /plugin marketplace add anugerahc/tsd-blueprint
+   ```
+3. Install plugin-nya dari marketplace tadi:
+   ```
+   /plugin install tsd-blueprint@tsd-blueprint-marketplace
+   ```
+4. Kalau muncul `Run /reload-plugins to activate.`, jalankan:
+   ```
+   /reload-plugins
+   ```
+   (biasanya otomatis dijalankan Claude Code sendiri setelah install.)
+5. Verifikasi ke-install dengan benar:
+   ```
+   /plugin
+   ```
+   → tab **Installed**, cari `tsd-blueprint` — pastikan skill `tsd-blueprint` kelihatan di component inventory-nya.
+6. Selesai. Skill otomatis aktif — tinggal minta di chat: *"buatkan TSD untuk module X"*, atau
+   panggil eksplisit dengan `/tsd-blueprint:tsd-blueprint`.
 
-**Tool lain** (Antigravity, Cursor, Kiro, Codex CLI) — pakai installer script:
+Gak perlu clone repo atau copy file manual sama sekali — plugin sudah bundle `core/` +
+`template/`-nya sendiri.
+
+> Update ke versi terbaru: `/plugin marketplace update tsd-blueprint-marketplace` lalu install
+> ulang. Uninstall: `/plugin uninstall tsd-blueprint@tsd-blueprint-marketplace`.
+
+### Tool lain (Antigravity, Cursor, Kiro, Codex CLI) — installer script
 
 ```bash
 git clone https://github.com/anugerahc/tsd-blueprint.git
