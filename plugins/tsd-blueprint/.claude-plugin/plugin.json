@@ -1,7 +1,7 @@
 {
   "name": "tsd-blueprint",
   "displayName": "TSD Blueprint",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Generate verified Technical Spec Documents (TSD) per-module from real source code and live database investigation — not guesses.",
   "author": {
     "name": "Anugerah Christian"

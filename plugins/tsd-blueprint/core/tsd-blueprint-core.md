@@ -40,6 +40,38 @@ STOP dan tanya dulu module mana yang dimaksud — jangan asumsi.
 6. Kalau user kasih koreksi fakta (misal: "department itu bukan fixed value, itu di-set per row di
    master data") — treat sebagai ground truth, re-verifikasi ke DB kalau perlu, dan jangan ulangi
    kesalahan yang sama untuk section lain yang serupa.
+7. **Self-contained — jangan ambil referensi dari luar bundle skill ini.** Semua yang dibutuhkan
+   (metodologi + scaffold) sudah lengkap di `core/` dan `template/` skill ini. Dilarang browse/Glob
+   folder lain di disk yang sama buat "nyari contoh TSD lain", "ngecek konsistensi warna/gaya",
+   atau alasan referensi apapun — walau kebetulan ketemu (misal di mesin dev yang sama ada TSD
+   project lain). Kalau mau contoh konkret, cukup baca struktur di dokumen ini, jangan cari file
+   nyata di luar scope project yang lagi dikerjakan.
+8. **Jangan pernah menulis/mengedit file di dalam skill/plugin itu sendiri** (`core/`, `template/`
+   di lokasi asal instalasi skill — baik itu source repo dev maupun cache hasil install plugin).
+   Itu read-only source-of-truth buat semua project yang makai skill ini. Selalu COPY dulu
+   `template/` ke folder output di project user, baru edit salinannya di sana. Kalau memang niatnya
+   menambah fitur baru ke scaffold itu sendiri (bukan mengisi konten 1 TSD), itu kerjaan maintainer
+   blueprint di source repo aslinya (GitHub), bukan sesuatu yang dilakukan saat generate TSD biasa.
+9. **Query database cuma boleh read-only** (`SELECT`, `DESCRIBE`, `information_schema`, dst) —
+   walau tool MCP yang tersedia secara teknis mengizinkan write/DDL, jangan pernah pakai buat
+   INSERT/UPDATE/DELETE/ALTER/DROP. Tujuan live-query di sini murni verifikasi, bukan mengubah data.
+10. **Jangan tempelkan data mentah yang sensitif/personal dari live-query ke dalam dokumen** — nama
+    user asli, email, nomor telepon, harga transaksi, data customer, dsb. Kalau butuh contoh baris
+    data buat ilustrasi, generalisasi/redact isinya (mis. ganti nama jadi "User A", tanggal jadi
+    format umum). Yang boleh ditulis apa adanya: nama kolom, tipe data, constraint, definisi
+    enum/status code, nama tabel/view — bukan isi baris data pribadi.
+
+## 1b. Checklist Sebelum Declare Selesai
+
+Sebelum bilang ke user dokumennya kelar, cek dulu:
+
+- [ ] Gak ada `{{...}}` placeholder yang kelewat belum diganti (grep file output cari `{{`).
+- [ ] Kalau folder output TSD-nya udah ada isi sebelumnya (bukan folder baru kosong), sudah
+      konfirmasi ke user dulu apa mau full-overwrite atau cuma update section tertentu — jangan
+      timpa diam-diam.
+- [ ] Semua section baku (00-15, lihat bagian 2) ada, kecuali yang eksplisit disetujui user buat
+      dihapus/diganti.
+- [ ] Rendering dicek jalan (Mermaid gak error, lightbox/copy-MD/print gak crash).
 
 ## 2. Struktur Section (urutan baku)
 
@@ -99,9 +131,10 @@ tool-agnostic, tinggal pakai:
 - Tema warna: ubah CSS var di `:root` (`--primary`, dst) kalau module/brand butuh warna beda dari hijau default.
 
 Jangan tulis ulang lightbox/markdown-exporter/dst dari nol — itu kerjaan mekanis yang udah selesai
-dan teruji; cukup isi konten HTML-nya. Kalau scaffold-nya sendiri butuh fitur baru, edit
-`template/js/script.js` / `template/css/style.css` di sini (bukan di hasil generate per-module),
-supaya semua TSD masa depan otomatis ikut dapat fiturnya.
+dan teruji; cukup isi konten HTML-nya. Kalau scaffold-nya sendiri butuh fitur baru, itu perubahan
+di source repo TSD Blueprint aslinya (GitHub, di luar sesi generate TSD biasa) — BUKAN dengan
+mengedit `template/` di lokasi skill yang lagi aktif sekarang (source repo dev maupun cache plugin
+terinstall keduanya read-only buat keperluan generate TSD sehari-hari, lihat aturan 8).
 
 ## 5. Class HTML Penting (dipakai konsisten semua TSD)
 
