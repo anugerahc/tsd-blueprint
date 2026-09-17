@@ -3,7 +3,19 @@
 Semua isi `_blueprint/` (folder ini) adalah file teks polos (markdown/html/css/js) — gak ada
 dependency ke mesin ini, gak butuh install apapun secara khusus.
 
-## Cara cepat (otomatis)
+## Claude Code — instalasi resmi via plugin marketplace
+
+```
+/plugin marketplace add anugerahc/tsd-blueprint
+/plugin install tsd-blueprint@tsd-blueprint-marketplace
+```
+
+Ini cara paling proper untuk Claude Code — plugin-nya bundle sendiri `core/` + `template/` di
+dalam `plugins/tsd-blueprint/`, jadi begitu terinstall langsung aktif, gak perlu copy manual atau
+jalanin script apapun. Skill diaktifkan otomatis lewat `/tsd-blueprint:tsd-blueprint` atau
+otomatis terpanggil pas konteksnya cocok.
+
+## Cara cepat buat tool lain (otomatis)
 
 Dari root project TARGET (project yang mau dipasangin blueprint ini):
 
@@ -50,15 +62,11 @@ Kalau project target punya database, setup MCP DB server yang sesuai (postgres/m
    benar-benar dijalankan, bukan cuma verifikasi dari kode doang. Kalau belum sempat setup, tetap
    bisa jalan (lihat fallback rule di `core/tsd-blueprint-core.md` bagian 1) tapi hasilnya kurang kuat.
 
-## Ini BUKAN plugin/extension resmi yang tinggal "Install" dari marketplace
-
-Blueprint ini sekarang bentuknya file mentah yang di-copy manual. Kalau mau upgrade jadi
-"instalable" via marketplace resmi masing-masing tool, lihat catatan per-tool di bawah — beberapa
-bisa, beberapa belum ada mekanismenya sama sekali.
+## Status instalasi resmi per tool
 
 | Tool | Ada marketplace/install resmi? | Catatan |
 |---|---|---|
-| Claude Code | ✅ Ya | Bisa dibungkus jadi Plugin (`.claude-plugin/marketplace.json` + `plugin.json`), didistribusikan lewat GitHub repo, diinstall user lain dengan `/plugin marketplace add <owner>/<repo>` lalu `/plugin install tsd-blueprint@<marketplace>`. |
+| Claude Code | ✅ Sudah aktif | Repo ini sudah jadi marketplace (`.claude-plugin/marketplace.json`) + plugin (`plugins/tsd-blueprint/`) yang bundle `core/`+`template/` sendiri. Install dengan `/plugin marketplace add anugerahc/tsd-blueprint` lalu `/plugin install tsd-blueprint@tsd-blueprint-marketplace`. |
 | Antigravity | ✅ Ya | Skill bisa didaftarkan ke marketplace Antigravity/`npx skills` (package manager cross-tool by Vercel Labs) untuk one-click install. Minimal tanpa marketplace pun tinggal copy folder ke `.agents/skills/`. |
 | Cursor | ⚠️ Terbatas | Ada Marketplace resmi tapi publish plugin/skill ke situ baru kebuka penuh untuk akun Team/Enterprise (personal skill di `~/.cursor/skills/` → publish ke marketplace tim). Untuk individual user, distribusi ya manual copy `.cursor/rules/`. |
 | Kiro | ⚠️ Via extension pihak ketiga | Ada community extension (`kiro-steering-docs-extension`) yang bisa install steering docs dari GitHub — bukan mekanisme resmi AWS, tapi jalan. Tanpa extension itu, manual copy ke `.kiro/steering/`. |

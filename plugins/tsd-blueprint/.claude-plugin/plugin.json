@@ -1,0 +1,13 @@
+{
+  "name": "tsd-blueprint",
+  "displayName": "TSD Blueprint",
+  "version": "1.0.0",
+  "description": "Generate verified Technical Spec Documents (TSD) per-module from real source code and live database investigation — not guesses.",
+  "author": {
+    "name": "Anugerah Christian"
+  },
+  "repository": "https://github.com/anugerahc/tsd-blueprint",
+  "license": "MIT",
+  "keywords": ["documentation", "technical-spec", "reverse-engineering", "database"],
+  "skills": "./skills"
+}

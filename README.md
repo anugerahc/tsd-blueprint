@@ -16,8 +16,17 @@ INSTALL.md                   ← panduan instalasi manual (kalau gak mau pakai s
 
 ## Quick start
 
+**Claude Code** (instalasi resmi via plugin marketplace):
+
+```
+/plugin marketplace add anugerahc/tsd-blueprint
+/plugin install tsd-blueprint@tsd-blueprint-marketplace
+```
+
+**Tool lain** (Antigravity, Cursor, Kiro, Codex CLI) — pakai installer script:
+
 ```bash
-git clone <repo-url> tsd-blueprint
+git clone https://github.com/anugerahc/tsd-blueprint.git
 cd /path/to/your-project
 bash /path/to/tsd-blueprint/install.sh
 ```

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://code.claude.com/schemas/marketplace.json",
+  "name": "tsd-blueprint-marketplace",
+  "owner": {
+    "name": "Anugerah Christian"
+  },
+  "description": "Marketplace for the TSD Blueprint plugin — generate verified Technical Spec Documents from real source code and live database investigation.",
+  "version": "1.0.0",
+  "plugins": [
+    {
+      "name": "tsd-blueprint",
+      "source": "./plugins/tsd-blueprint",
+      "displayName": "TSD Blueprint",
+      "description": "Generate verified Technical Spec Documents (TSD) per-module — wajib terverifikasi dari source code + live database, bukan asumsi.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Anugerah Christian"
+      },
+      "repository": "https://github.com/anugerahc/tsd-blueprint",
+      "license": "MIT",
+      "keywords": ["documentation", "technical-spec", "reverse-engineering", "database"],
+      "category": "productivity"
+    }
+  ]
+}
