@@ -24,6 +24,42 @@ STOP dan tanya dulu module mana yang dimaksud — jangan asumsi.
      database fisik — supaya pembaca tau ini bisa saja beda dari kondisi DB production sebenarnya
      (migration drift, FK yang di-drop manual, dll). Begitu MCP DB tersedia di kemudian hari,
      dokumen harus di-upgrade jadi live-verified.
+   - **Sebelum declare "MCP DB gak ada/gak cocok" — cek dulu apa memang benar gak ada jalan lain**,
+     ikuti alur discovery di bagian 1a sebelum jatuh ke fallback code-only.
+
+### 1a. Discovery & Setup MCP DB kalau belum konek ke database yang relevan
+
+1. Cek MCP DB tools yang SUDAH tersambung di sesi ini — kalau ada yang engine & scope-nya cocok
+   buat database module yang lagi diinvestigasi, pakai itu, selesai di sini.
+2. Kalau belum ada yang cocok: baca file config koneksi project (`appsettings.json` /
+   `appsettings.*.json` / `.env` / config setara tergantung stack) buat nemuin KEY connection
+   string yang relevan sama module ini (biasanya per-DbContext atau per-service), dan dari situ
+   tentuin engine database-nya (Postgres/MSSQL/Oracle/MySQL/dll — biasanya kelihatan dari nama
+   provider di kode, mis. `UseNpgsql`/`UseSqlServer`/nama library Oracle). **Jangan pernah
+   decrypt/tempel isi ciphertext connection string ke user atau ke dokumen** — cukup nama KEY dan
+   engine-nya.
+3. Kalau ketemu kandidat database yang relevan tapi belum ada MCP server yang connect ke situ:
+   **WAJIB tanya user dulu secara eksplisit sebelum lanjut** — jangan install/ubah config apapun
+   diam-diam. Sampaikan: nama KEY connection string yang ketemu, engine-nya, dan bahwa lanjut
+   berarti (a) mungkin perlu install tooling MCP server buat engine itu kalau belum ada di mesin,
+   dan (b) menulis entry config MCP baru (biasanya file config global tool AI yang dipakai, di luar
+   folder project) yang isinya bisa termasuk connection detail/credential.
+4. Begitu user setuju:
+   a. Cek dulu apa tooling MCP buat engine itu udah ke-install di mesin (cek binary di PATH, atau
+      pola entry MCP config yang sudah ada buat engine sama tapi database beda — kalau ada, itu
+      tandanya tooling-nya sudah terpasang, tinggal tiru pola confignya). Kalau belum ke-install,
+      cari tahu dulu nama package resmi MCP server buat engine itu (jangan asal tebak nama
+      package), lalu install via package manager yang sesuai (npm/pip/dll) — tunjukkan command
+      yang bakal dijalankan sebelum eksekusi.
+   b. Kalau di config MCP yang sudah ada ketemu entry lain dengan engine yang sama (mis. sudah ada
+      `mssql` buat database lain), tiru struktur entry itu persis dan minta user cuma kasih detail
+      koneksi yang beda (host/port/nama database/username/password) buat database baru ini.
+   c. Tambahkan entry baru ke config MCP tool yang dipakai (lokasinya beda-beda per tool — cari
+      tahu konvensi tool yang sedang aktif, jangan asumsi satu lokasi berlaku untuk semua).
+   d. Kasih tahu user: MCP server baru biasanya baru bisa dipakai setelah restart sesi/tool — gak
+      langsung aktif di sesi yang sedang berjalan sekarang.
+5. Kalau user menolak atau belum sempat setup MCP baru saat itu: fallback normal — lanjut dari
+   source code saja, tandai eksplisit "belum live-verified" sesuai aturan 1.
 2. **Kalau ternyata tebakan salah (ketauan pas verifikasi lanjut), diam-diam koreksi ke user
    dan revisi dokumen — TAPI JANGAN narasikan kesalahan investigasi sendiri di dalam dokumen.**
    Dokumen final harus baca seolah semua temuan didapat langsung dengan benar. Proses trial-error

@@ -36,9 +36,13 @@ ulang JS/CSS-nya, itu sudah generic dan fungsional).
 3. Konfirmasi ke user: module mana, project mana, output ditaruh di mana. Kalau ambigu, tanya dulu
    — jangan asumsi.
 4. Investigasi source code module (controller → service → entity/DAL) + live-query database yang
-   relevan lewat MCP DB tools yang tersedia di project user (kalau belum ada MCP DB, ikuti fallback
-   rule di core doc bagian 1 — tetap boleh jalan dari source code saja, tapi tandai eksplisit mana
-   yang belum live-verified).
+   relevan lewat MCP DB tools yang tersedia di project user. Kalau gak ada MCP yang cocok buat
+   database module ini, ikuti alur discovery di core doc bagian 1a SEBELUM nyerah ke fallback:
+   cek `appsettings.json`/config setara buat nemuin KEY connection string + engine-nya, lalu
+   **tanya user dulu** kalau mau dibantu setup MCP server baru (install tooling + tambah config —
+   dua-duanya WAJIB izin eksplisit, jangan pernah jalan diam-diam, dan connection string
+   ciphertext-nya jangan pernah ditempel ke user/dokumen). Kalau user gak mau/gak sempat, baru
+   fallback ke source-code-only (tetap boleh jalan, tandai eksplisit mana yang belum live-verified).
 5. Copy `${CLAUDE_PLUGIN_ROOT}/template/` (path yang sudah di-resolve di langkah 1, bukan hasil
    pencarian lain) ke folder output di project user — kalau folder output udah ada isi TSD
    sebelumnya, tanya user dulu (overwrite total atau update section tertentu), jangan timpa
