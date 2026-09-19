@@ -189,6 +189,29 @@ terinstall keduanya read-only buat keperluan generate TSD sehari-hari, lihat atu
   tulis plain text: `(lihat ROI §14)` — tanpa class/span apapun.
 - `.badge.get` / `.badge.post` — badge HTTP method di tabel API endpoint.
 
+## 5b. Evidence Link ke File Source Code (kalau mau nunjuk ke file, bukan cuma kutip verbatim)
+
+Kutipan kode verbatim di §05 (Query & Business Logic) itu sudah cukup dan portable dengan sendirinya
+— gak butuh link apapun. Tapi kalau mau nambah evidence/traceability berupa link ke file source
+(mis. "lihat GtProdukService.cs baris 241-249"), WAJIB pilih salah satu dari 2 cara ini — JANGAN
+pernah pakai link relative filesystem lokal (`<a href="../../path/ke/File.cs">`):
+
+1. **Kalau project punya remote git yang bisa diakses (GitHub/GitLab, dst):** pakai URL hosted
+   repo yang di-pin ke commit SHA saat itu, plus anchor baris kalau platform-nya support (GitHub:
+   `#L241-L249`). Contoh: `https://github.com/org/repo/blob/<commit-sha>/path/File.cs#L241-L249`.
+   Ini tetap valid diklik dari device/folder manapun selama ada akses internet ke repo itu — gak
+   bergantung struktur folder lokal sama sekali.
+2. **Kalau gak ada remote yang bisa diakses (repo private tanpa akses publik, atau gak yakin
+   dokumen ini bakal dibuka dari mana):** JANGAN pakai `<a href>` sama sekali. Cukup teks polos:
+   `<code>path/relatif/dari/root/repo/File.cs</code> · baris 241-249`. Informatif tanpa janjiin
+   link yang bisa jadi 404 begitu dokumen dipindah keluar dari lokasi asalnya.
+
+Alasan larangan relative filesystem path: link kayak `../../MAVEN.Services/...` cuma valid selama
+dokumennya nangkring persis di kedalaman folder yang sama relatif ke root repo aslinya. Begitu
+folder TSD-nya di-copy/di-share ke device lain atau lokasi lain (yang notabene skenario paling
+umum buat dokumen yang niatnya dibagi ke tim), SEMUA link itu putus jadi 404 — padahal dokumennya
+sendiri (HTML+CSS+JS) tetap portable. Jangan buat 1 bagian dokumen jadi gak portable gara-gara ini.
+
 ## 6. Bahasa & Tone
 
 Ikuti bahasa yang diminta user untuk dokumen ini (default: Bahasa Indonesia formal-teknis,

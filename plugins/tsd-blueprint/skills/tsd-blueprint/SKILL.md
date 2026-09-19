@@ -53,5 +53,10 @@ ulang JS/CSS-nya, itu sudah generic dan fungsional).
 7. Sebelum declare selesai: grep hasil akhir cari `{{` yang kelewat, cek 16 section baku ada semua
    (kecuali yang disetujui user buat dihapus), dan verifikasi render (Mermaid/lightbox/copy-MD/print
    jalan tanpa modifikasi JS/CSS).
+8. Kalau mau nambah evidence link ke file source (bukan cuma kutip verbatim), JANGAN PERNAH pakai
+   link relative filesystem (`<a href="../../path/File.cs">`) — putus begitu dokumen dipindah dari
+   lokasi asalnya. Kalau project punya remote git, pakai URL hosted repo pinned ke commit SHA
+   (`https://github.com/org/repo/blob/<sha>/path#L241-L249`); kalau gak ada remote, plain text
+   `<code>path</code>` tanpa `<a href>` sama sekali. Detail di core doc §5b.
 
 Jangan eksekusi kalau scope module/project ambigu — tanya user dulu.
