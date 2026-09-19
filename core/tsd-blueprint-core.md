@@ -188,6 +188,19 @@ terinstall keduanya read-only buat keperluan generate TSD sehari-hari, lihat atu
   teks). Kalau cuma butuh cross-reference singkat ke item ROI dari dalam kalimat/bullet, cukup
   tulis plain text: `(lihat ROI §14)` — tanpa class/span apapun.
 - `.badge.get` / `.badge.post` — badge HTTP method di tabel API endpoint.
+- **Sidebar TOC dikelompokkan jadi 3 grup collapsible** (`.toc-group` > `.toc-group-toggle` +
+  `.toc-sub`), bukan 1 daftar 16 item flat — biar sidebar gak keliatan gamplang. Grouping baku:
+  1. **📘 Overview & Proses Bisnis** — 00 Riwayat Revisi, 01 Latar Belakang, 02 Alur Bisnis.
+  2. **🧩 Spesifikasi Fungsional** — 03 Input Data, 04 Business Rule, 07 Notifikasi,
+     11 Field Dictionary, 12 Tombol & Perilaku, 13 Audit & Access.
+  3. **⚙️ Spesifikasi Teknis & Referensi** — 05 Query dari Kode, 06 API Endpoint,
+     08 Tech Spec & RBAC, 09 Database/ERD, 10 Integrasi Eksternal, 14 Room of Improvement,
+     15 Appendix Koneksi Database.
+  Grup 1 default expanded (`aria-expanded="true"`, `.toc-sub` tanpa class `collapsed`), grup 2 & 3
+  default collapsed (`aria-expanded="false"`, `.toc-sub.collapsed`). JS (`script.js`) otomatis
+  expand grup yang lagi berisi section aktif pas discroll — jangan hapus logic `expandGroupOf()` itu.
+  Kalau section baku ditambah/dikurangi (lihat §2), sesuaikan section itu masuk grup mana yang
+  paling relevan (business/functional/technical) — jangan bikin grup ke-4 kecuali user minta.
 
 ## 5b. Evidence Link ke File Source Code (kalau mau nunjuk ke file, bukan cuma kutip verbatim)
 

@@ -30,6 +30,24 @@
     });
   }
 
+  // ---------- Sidebar TOC groups (collapsible) ----------
+  document.querySelectorAll(".toc-group-toggle").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var sub = btn.nextElementSibling;
+      var expanded = btn.getAttribute("aria-expanded") === "true";
+      btn.setAttribute("aria-expanded", String(!expanded));
+      if (sub) sub.classList.toggle("collapsed", expanded);
+    });
+  });
+
+  function expandGroupOf(link) {
+    var sub = link.closest(".toc-sub");
+    if (!sub || !sub.classList.contains("collapsed")) return;
+    sub.classList.remove("collapsed");
+    var btn = sub.previousElementSibling;
+    if (btn) btn.setAttribute("aria-expanded", "true");
+  }
+
   var links = Array.prototype.slice.call(document.querySelectorAll(".toc a"));
   var sections = links
     .map(function (a) {
@@ -44,7 +62,9 @@
       if (sec.offsetTop <= pos) current = sec;
     });
     links.forEach(function (a) {
-      a.classList.toggle("active", a.getAttribute("href") === "#" + current.id);
+      var isActive = a.getAttribute("href") === "#" + current.id;
+      a.classList.toggle("active", isActive);
+      if (isActive) expandGroupOf(a);
     });
   }
   window.addEventListener("scroll", onScroll);

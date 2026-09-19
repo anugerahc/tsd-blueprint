@@ -71,6 +71,28 @@ body{
 }
 .toc li a.active .num{background:rgba(255,255,255,.25); color:#fff;}
 
+/* Sidebar TOC groups (collapsible) */
+.toc-group{margin-bottom:4px;}
+.toc-group-toggle{
+  display:flex; align-items:center; gap:8px; width:100%;
+  background:none; border:none; cursor:pointer;
+  padding:10px 12px; margin-top:6px;
+  font-family:inherit; font-size:12px; font-weight:800;
+  letter-spacing:.03em; text-transform:uppercase;
+  color:#9fe3bd; text-align:left;
+  border-radius:8px;
+  transition:background .15s ease, color .15s ease;
+}
+.toc-group-toggle:hover{background:rgba(255,255,255,.06); color:#fff;}
+.toc-group-icon{font-size:14px;}
+.toc-group-toggle .chev{
+  margin-left:auto; font-size:11px; color:#7fb99a;
+  transition:transform .2s ease;
+}
+.toc-group-toggle[aria-expanded="true"] .chev{transform:rotate(180deg);}
+.toc-sub{list-style:none; margin:2px 0 6px; padding:0; overflow:hidden;}
+.toc-sub.collapsed{display:none;}
+
 /* Main */
 .main{margin-left:var(--sidebar-w); flex:1; min-width:0; padding:44px 52px 100px; max-width:1040px;}
 
