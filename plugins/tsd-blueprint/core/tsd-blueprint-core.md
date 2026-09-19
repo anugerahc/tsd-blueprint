@@ -172,8 +172,13 @@ tool-agnostic, tinggal pakai:
 
 - **Sidebar TOC + scroll-spy** — otomatis highlight section aktif saat scroll.
 - **Scroll-reveal animation** — section fade-in pas masuk viewport (`IntersectionObserver`).
-- **Diagram zoom/pan lightbox** — klik `.diagram-card` manapun → buka lightbox, scroll buat zoom,
-  drag buat pan, Esc/klik-luar/tombol ✕ buat tutup.
+- **Diagram/screenshot zoom/pan lightbox** — klik `.diagram-card`/`.screenshot-card` manapun →
+  buka lightbox, scroll buat zoom, drag buat pan, Esc/klik-luar/tombol ✕ buat tutup. Zoom
+  diimplementasi dengan resize eksplisit (`width`/`height` px pada elemen yang di-clone), BUKAN
+  `transform:scale()` — sengaja begitu supaya SVG Mermaid tetap tajam di zoom level berapapun
+  (CSS transform:scale() bikin browser stretch tekstur GPU yang udah di-rasterize, hasilnya
+  pecah/blur di zoom tinggi; resize eksplisit maksa browser re-render vector-nya di ukuran
+  sebenarnya). Kalau mau ubah logic zoom ini, jangan balik ke pendekatan `transform:scale()`.
 - **Copy as Markdown** (`#btn-copy-md`) — convert seluruh dokumen (termasuk diagram Mermaid) ke
   Markdown siap paste ke Notion/Confluence/dll.
 - **Print/PDF** (`#btn-print`) — CSS print rules sudah ada (`break-inside:avoid` di tabel/diagram/callout).
@@ -191,6 +196,15 @@ terinstall keduanya read-only buat keperluan generate TSD sehari-hari, lihat atu
 - `<h2><span class="num">NN</span>Judul Section</h2>` — heading section, nomor 2-digit.
 - `.table-wrap > table` — tabel biasa.
 - `.diagram-card > pre.mermaid` + `.diagram-caption` — diagram Mermaid, otomatis dapat lightbox.
+- `.screenshot-card > img` + `.diagram-caption` — kalau butuh nempel screenshot/gambar raster (jarang
+  dipakai, TSD ini prioritasnya kode+DB, bukan screenshot), pakai class ini biar dapet lightbox +
+  affordance zoom yang sama kayak diagram. **WAJIB pakai gambar sumber resolusi tinggi** (minimal
+  ~1600px lebar buat full-page screenshot) — beda sama Mermaid yang vector (SVG, tetap tajam
+  di-zoom berapapun), gambar raster PASTI pecah kalau di-zoom melebihi resolusi aslinya. Lightbox-nya
+  sendiri udah otomatis membatasi max-zoom sesuai `naturalWidth` gambar biar gak dipaksa nge-zoom
+  ngelewatin batas itu, tapi itu cuma mencegah "makin pecah dari yang seharusnya" — bukan
+  menyulap gambar resolusi rendah jadi tajam. Kalau sumbernya emang cuma resolusi rendah,
+  satu-satunya solusi beneran adalah re-capture gambarnya di resolusi lebih tinggi.
 - `.callout` + modifier: `.warn` (perhatian netral), `.danger` (dipakai buat ROI item lama —
   pertimbangkan ganti ke `.roi` biar konsisten tone-nya kalem), `.roi` (Room of Improvement,
   warna beda dari danger, tone lebih tenang), `.ok` (klarifikasi/update positif dari analisis awal).

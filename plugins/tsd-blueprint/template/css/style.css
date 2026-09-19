@@ -211,6 +211,22 @@ section.in-view{opacity:1; transform:translateY(0);}
 }
 .diagram-card:hover::after{opacity:1;}
 
+/* Screenshot card — same zoom affordance as diagram-card, for embedded raster images */
+.screenshot-card{
+  background:var(--panel); border:1px solid var(--border); border-radius:var(--radius);
+  padding:18px; margin:16px 0; box-shadow:0 4px 18px -10px rgba(0,0,0,.1); overflow-x:auto;
+  cursor:zoom-in; position:relative; transition:box-shadow .2s ease, transform .2s ease; text-align:center;
+}
+.screenshot-card img{max-width:100%; height:auto; border-radius:8px; display:inline-block;}
+.screenshot-card:hover{box-shadow:0 10px 28px -10px rgba(30,158,90,.35); transform:translateY(-2px);}
+.screenshot-card::after{
+  content:"\f00e"; font-family:"Font Awesome 6 Free"; font-weight:900;
+  position:absolute; top:10px; right:12px; font-size:13px; color:var(--muted);
+  background:var(--panel); border:1px solid var(--border); border-radius:6px; padding:5px 7px;
+  opacity:0; transition:opacity .2s ease;
+}
+.screenshot-card:hover::after{opacity:1;}
+
 /* Lightbox */
 .lightbox-overlay{
   position:fixed; inset:0; background:rgba(10,20,15,.82); z-index:1000;
@@ -244,8 +260,9 @@ section.in-view{opacity:1; transform:translateY(0);}
   a{color:inherit; text-decoration:none;}
   *{-webkit-print-color-adjust:exact !important; print-color-adjust:exact !important;}
   section{opacity:1 !important; transform:none !important;}
-  .table-wrap, .diagram-card, .callout, .stat-row{break-inside:avoid;}
-  .diagram-card{cursor:default;}
+  .table-wrap, .diagram-card, .screenshot-card, .callout, .stat-row{break-inside:avoid;}
+  .diagram-card, .screenshot-card{cursor:default;}
+  .screenshot-card::after{display:none;}
   .diagram-card::after{display:none;}
   section h2{break-after:avoid;}
 }

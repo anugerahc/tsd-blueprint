@@ -119,17 +119,48 @@
   var stage = overlay.querySelector(".lightbox-stage");
   var viewport = overlay.querySelector(".lightbox-viewport");
   var scale = 1, panX = 0, panY = 0, dragging = false, lastX = 0, lastY = 0;
+  var baseW = 0, baseH = 0, maxScale = 6, currentEl = null;
 
+  // IMPORTANT: scale is applied by resizing the cloned element's own width/height
+  // (forces the browser to re-render vector content at true pixel size — stays crisp
+  // at any zoom level), NOT via CSS transform:scale() on the stage (that just stretches
+  // a cached GPU texture/bitmap and goes blurry/pixelated at high zoom). The stage
+  // transform is used ONLY for panning (translate), never for scale.
   function applyTransform() {
-    stage.style.transform = "translate(" + panX + "px," + panY + "px) scale(" + scale + ")";
+    if (currentEl) {
+      currentEl.style.width = (baseW * scale) + "px";
+      currentEl.style.height = (baseH * scale) + "px";
+    }
+    stage.style.transform = "translate(" + panX + "px," + panY + "px)";
   }
 
-  function openLightbox(svgEl) {
+  function openLightbox(el) {
     stage.innerHTML = "";
-    var clone = svgEl.cloneNode(true);
-    clone.style.width = "";
-    clone.style.height = "";
+    var isImg = el.tagName.toLowerCase() === "img";
+    var rect = el.getBoundingClientRect();
+    baseW = rect.width || el.clientWidth || 400;
+    baseH = rect.height || el.clientHeight || 300;
+
+    if (isImg) {
+      // Raster image: never scale past its native resolution — beyond that point
+      // every extra pixel is guaranteed to look pecah/blurry no matter what we do here.
+      // Fixing that requires re-capturing the source screenshot at a higher resolution,
+      // not a lightbox trick.
+      var natW = el.naturalWidth || baseW;
+      maxScale = Math.max(1, Math.min(6, natW / baseW));
+    } else {
+      // SVG (Mermaid diagram): vector, no real upper bound on crispness.
+      maxScale = 6;
+    }
+
+    var clone = el.cloneNode(true);
+    clone.style.width = baseW + "px";
+    clone.style.height = baseH + "px";
+    clone.style.maxWidth = "none";
+    clone.style.maxHeight = "none";
     stage.appendChild(clone);
+    currentEl = clone;
+
     scale = 1; panX = 0; panY = 0;
     applyTransform();
     overlay.classList.add("open");
@@ -139,10 +170,10 @@
     overlay.classList.remove("open");
   }
 
-  document.querySelectorAll(".diagram-card").forEach(function (card) {
+  document.querySelectorAll(".diagram-card, .screenshot-card").forEach(function (card) {
     card.addEventListener("click", function () {
-      var svg = card.querySelector("svg");
-      if (svg) openLightbox(svg);
+      var target = card.querySelector("svg, img");
+      if (target) openLightbox(target);
     });
   });
 
@@ -151,7 +182,7 @@
   });
   overlay.querySelector('[data-act="close"]').addEventListener("click", closeLightbox);
   overlay.querySelector('[data-act="in"]').addEventListener("click", function () {
-    scale = Math.min(scale * 1.25, 6);
+    scale = Math.min(scale * 1.25, maxScale);
     applyTransform();
   });
   overlay.querySelector('[data-act="out"]').addEventListener("click", function () {
@@ -173,7 +204,7 @@
       if (!overlay.classList.contains("open")) return;
       e.preventDefault();
       var delta = e.deltaY > 0 ? 0.9 : 1.1;
-      scale = Math.min(Math.max(scale * delta, 0.3), 6);
+      scale = Math.min(Math.max(scale * delta, 0.3), maxScale);
       applyTransform();
     },
     { passive: false }
@@ -286,6 +317,13 @@
       var md = pre ? blockToMd(pre) : "";
       if (cap) md += "*" + textOf(cap) + "*\n\n";
       return md;
+    }
+    if (el.classList && el.classList.contains("screenshot-card")) {
+      var img = el.querySelector("img");
+      var scap = el.querySelector(".diagram-caption");
+      var smd = img ? "![" + (img.getAttribute("alt") || "screenshot") + "](" + img.getAttribute("src") + ")\n\n" : "";
+      if (scap) smd += "*" + textOf(scap) + "*\n\n";
+      return smd;
     }
     if (tag === "div" || tag === "section") {
       var out = "";
