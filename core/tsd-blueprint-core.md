@@ -111,29 +111,42 @@ Sebelum bilang ke user dokumennya kelar, cek dulu:
 
 ## 2. Struktur Section (urutan baku)
 
-Urutan ini hasil evolusi dari revisi berulang (query dari kode dipindah dari akhir ke tengah,
-use-case-end-to-end section dihapus karena redundan dengan alur bisnis) — pertahankan urutan
-ini kecuali module yang didokumentasikan punya alasan struktural buat beda:
+Urutan & nomor di bawah SUDAH final grouped — 3 blok angka nyambung (00-02, 03-08, 09-15),
+selaras sama 3 grup sidebar collapsible di §5. **Jangan pernah bikin section yang nomornya
+melompat keluar rentang grup-nya sendiri** (nomor section HARUS naik terus dari section pertama
+sampai terakhir tanpa loncat — kalau grouping visual gak sinkron sama urutan angka fisik, sidebar
+bakal keliatan buggy walau isinya bener):
 
+**Grup 1 — Overview & Proses Bisnis**
 00. Riwayat Revisi
 01. Latar Belakang & Tujuan (business background, objectives, scope in/out, glossary)
 02. Alur Bisnis / Proses (flow diagram, state machine, transisi & trigger, side-effect tiap perubahan status)
+
+**Grup 2 — Spesifikasi Fungsional**
 03. Modul Input Data (field per form/tab, auto-generate logic, format nomor dokumen)
 04. Modul Validasi / Business Rule (generation logic, perhitungan, validasi — tandai mana yang cuma client-side)
-05. Query & Business Logic dari Kode (kutipan LINQ/kode asli + terjemahan raw SQL buat DB editor + penjelasan)
-06. API Endpoint Specification (per controller/API class, method/action/param/return/catatan)
-07. Notifikasi & Template Komunikasi
-08. Technical Specification (tech stack table, RBAC/access matrix)
-09. Database Architecture (ERD) — full column, real FK constraints (cek live, jangan cuma baca ModelBuilder), definisi view/SP yang dipakai
-10. Integrasi Sistem Eksternal
-11. Field Dictionary
-12. Tombol Aksi & Perilaku
-13. Audit Trail & Access
+05. Notifikasi & Template Komunikasi
+06. Field Dictionary
+07. Tombol Aksi & Perilaku
+08. Audit Trail & Access
+
+**Grup 3 — Spesifikasi Teknis & Referensi**
+09. Query & Business Logic dari Kode (kutipan LINQ/kode asli + terjemahan raw SQL buat DB editor + penjelasan)
+10. API Endpoint Specification (per controller/API class, method/action/param/return/catatan)
+11. Technical Specification (tech stack table, RBAC/access matrix)
+12. Database Architecture (ERD) — full column, real FK constraints (cek live, jangan cuma baca ModelBuilder), definisi view/SP yang dipakai
+13. Integrasi Sistem Eksternal
 14. Room of Improvement (ROI)
 15. Appendix — Koneksi Database (nama KEY connection string per environment, method decrypt-nya — JANGAN taruh ciphertext/credential asli)
 
 Section boleh ditambah/dikurangi kalau module-nya emang beda karakter (misal gak ada notifikasi
-email sama sekali) — tapi diskusikan dulu ke user sebelum menghapus section baku.
+email sama sekali) — tapi diskusikan dulu ke user sebelum menghapus section baku, dan kalau ada
+section yang dihapus/ditambah, **renumber ulang section sesudahnya** supaya tiap grup tetap
+punya rentang angka nyambung (jangan cuma hapus section-nya terus biarin ada lubang di angka).
+
+Kalau ada cross-reference tertulis di prose (mis. `(lihat §09)`, `(lihat ROI §14)`) dan section-nya
+di-renumber, WAJIB update semua cross-reference itu juga di seluruh dokumen — jangan cuma ganti
+nomor section-nya doang.
 
 ## 3. Alur Kerja Investigasi
 
@@ -189,12 +202,14 @@ terinstall keduanya read-only buat keperluan generate TSD sehari-hari, lihat atu
   tulis plain text: `(lihat ROI §14)` — tanpa class/span apapun.
 - `.badge.get` / `.badge.post` — badge HTTP method di tabel API endpoint.
 - **Sidebar TOC dikelompokkan jadi 3 grup collapsible** (`.toc-group` > `.toc-group-toggle` +
-  `.toc-sub`), bukan 1 daftar 16 item flat — biar sidebar gak keliatan gamplang. Grouping baku:
+  `.toc-sub`), bukan 1 daftar 16 item flat — biar sidebar gak keliatan gamplang. Grouping baku
+  (nomor section SUDAH direnumber biar nyambung per grup — lihat §2, JANGAN pakai nomor lama
+  yang loncat-loncat):
   1. **📘 Overview & Proses Bisnis** — 00 Riwayat Revisi, 01 Latar Belakang, 02 Alur Bisnis.
-  2. **🧩 Spesifikasi Fungsional** — 03 Input Data, 04 Business Rule, 07 Notifikasi,
-     11 Field Dictionary, 12 Tombol & Perilaku, 13 Audit & Access.
-  3. **⚙️ Spesifikasi Teknis & Referensi** — 05 Query dari Kode, 06 API Endpoint,
-     08 Tech Spec & RBAC, 09 Database/ERD, 10 Integrasi Eksternal, 14 Room of Improvement,
+  2. **🧩 Spesifikasi Fungsional** — 03 Input Data, 04 Business Rule, 05 Notifikasi,
+     06 Field Dictionary, 07 Tombol & Perilaku, 08 Audit & Access.
+  3. **⚙️ Spesifikasi Teknis & Referensi** — 09 Query dari Kode, 10 API Endpoint,
+     11 Tech Spec & RBAC, 12 Database/ERD, 13 Integrasi Eksternal, 14 Room of Improvement,
      15 Appendix Koneksi Database.
   Grup 1 default expanded (`aria-expanded="true"`, `.toc-sub` tanpa class `collapsed`), grup 2 & 3
   default collapsed (`aria-expanded="false"`, `.toc-sub.collapsed`). JS (`script.js`) otomatis
@@ -204,7 +219,7 @@ terinstall keduanya read-only buat keperluan generate TSD sehari-hari, lihat atu
 
 ## 5b. Evidence Link ke File Source Code (kalau mau nunjuk ke file, bukan cuma kutip verbatim)
 
-Kutipan kode verbatim di §05 (Query & Business Logic) itu sudah cukup dan portable dengan sendirinya
+Kutipan kode verbatim di §09 (Query & Business Logic) itu sudah cukup dan portable dengan sendirinya
 — gak butuh link apapun. Tapi kalau mau nambah evidence/traceability berupa link ke file source
 (mis. "lihat GtProdukService.cs baris 241-249"), WAJIB pilih salah satu dari 2 cara ini — JANGAN
 pernah pakai link relative filesystem lokal (`<a href="../../path/ke/File.cs">`):

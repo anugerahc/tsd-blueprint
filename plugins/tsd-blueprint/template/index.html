@@ -21,45 +21,7 @@
       <h1>{{MODULE_NAME}} — {{PROJECT_NAME}}</h1>
       <div class="sub">Module: {{MODULE_SUBTITLE}}</div>
     </div>
-    <ul class="toc">
-      <li class="toc-group">
-        <button class="toc-group-toggle" type="button" aria-expanded="true">
-          <span class="toc-group-icon">📘</span>Overview &amp; Proses Bisnis<span class="chev">▾</span>
-        </button>
-        <ul class="toc-sub">
-          <li><a href="#riwayat"><span class="num">00</span>Riwayat Revisi</a></li>
-          <li><a href="#latar-belakang"><span class="num">01</span>Latar Belakang</a></li>
-          <li><a href="#alur-bisnis"><span class="num">02</span>Alur Bisnis</a></li>
-        </ul>
-      </li>
-      <li class="toc-group">
-        <button class="toc-group-toggle" type="button" aria-expanded="false">
-          <span class="toc-group-icon">🧩</span>Spesifikasi Fungsional<span class="chev">▾</span>
-        </button>
-        <ul class="toc-sub collapsed">
-          <li><a href="#input-data"><span class="num">03</span>Input Data</a></li>
-          <li><a href="#validasi"><span class="num">04</span>Business Rule</a></li>
-          <li><a href="#notifikasi"><span class="num">07</span>Notifikasi</a></li>
-          <li><a href="#field-dictionary"><span class="num">11</span>Field Dictionary</a></li>
-          <li><a href="#tombol"><span class="num">12</span>Tombol &amp; Perilaku</a></li>
-          <li><a href="#audit"><span class="num">13</span>Audit &amp; Access</a></li>
-        </ul>
-      </li>
-      <li class="toc-group">
-        <button class="toc-group-toggle" type="button" aria-expanded="false">
-          <span class="toc-group-icon">⚙️</span>Spesifikasi Teknis &amp; Referensi<span class="chev">▾</span>
-        </button>
-        <ul class="toc-sub collapsed">
-          <li><a href="#code-queries"><span class="num">05</span>Query dari Kode</a></li>
-          <li><a href="#api"><span class="num">06</span>API Endpoint</a></li>
-          <li><a href="#tech-spec"><span class="num">08</span>Tech Spec &amp; RBAC</a></li>
-          <li><a href="#database"><span class="num">09</span>Database / ERD</a></li>
-          <li><a href="#integrasi"><span class="num">10</span>Integrasi Eksternal</a></li>
-          <li><a href="#gap"><span class="num">14</span>Room of Improvement</a></li>
-          <li><a href="#appendix"><span class="num">15</span>Koneksi Database</a></li>
-        </ul>
-      </li>
-    </ul>
+    <ul class="toc"> <li class="toc-group"> <button class="toc-group-toggle" type="button" aria-expanded="true"> <span class="toc-group-icon">📘</span>Overview &amp; Proses Bisnis<span class="chev">▾</span> </button> <ul class="toc-sub"> <li><a href="#riwayat"><span class="num">00</span>Riwayat Revisi</a></li> <li><a href="#latar-belakang"><span class="num">01</span>Latar Belakang</a></li> <li><a href="#alur-bisnis"><span class="num">02</span>Alur Bisnis</a></li> </ul> </li> <li class="toc-group"> <button class="toc-group-toggle" type="button" aria-expanded="false"> <span class="toc-group-icon">🧩</span>Spesifikasi Fungsional<span class="chev">▾</span> </button> <ul class="toc-sub collapsed"> <li><a href="#input-data"><span class="num">03</span>Input Data</a></li> <li><a href="#validasi"><span class="num">04</span>Business Rule</a></li> <li><a href="#notifikasi"><span class="num">05</span>Notifikasi</a></li> <li><a href="#field-dictionary"><span class="num">06</span>Field Dictionary</a></li> <li><a href="#tombol"><span class="num">07</span>Tombol &amp; Perilaku</a></li> <li><a href="#audit"><span class="num">08</span>Audit &amp; Access</a></li> </ul> </li> <li class="toc-group"> <button class="toc-group-toggle" type="button" aria-expanded="false"> <span class="toc-group-icon">⚙️</span>Spesifikasi Teknis &amp; Referensi<span class="chev">▾</span> </button> <ul class="toc-sub collapsed"> <li><a href="#code-queries"><span class="num">09</span>Query dari Kode</a></li> <li><a href="#api"><span class="num">10</span>API Endpoint</a></li> <li><a href="#tech-spec"><span class="num">11</span>Tech Spec &amp; RBAC</a></li> <li><a href="#database"><span class="num">12</span>Database / ERD</a></li> <li><a href="#integrasi"><span class="num">13</span>Integrasi Eksternal</a></li> <li><a href="#gap"><span class="num">14</span>Room of Improvement</a></li> <li><a href="#appendix"><span class="num">15</span>Koneksi Database</a></li> </ul> </li> </ul>
   </aside>
 
   <main class="main">
@@ -154,8 +116,38 @@ flowchart LR
       <!-- Kalau validasi cuma di client dan server gak re-check, WAJIB pakai .callout.roi di sini -->
     </section>
 
+    <section id="notifikasi">
+      <h2><span class="num">05</span>Notifikasi &amp; Template Komunikasi</h2>
+      <p>{{NOTIFICATION_INTRO}}</p>
+      <div class="table-wrap"><table>
+        <tr><th>Trigger</th><th>Kapan</th><th>Penerima</th></tr>
+        <tr><td>{{TRIGGER_1}}</td><td>{{WHEN_1}}</td><td>{{RECIPIENT_1}}</td></tr>
+      </table></div>
+    </section>
+
+    <section id="field-dictionary">
+      <h2><span class="num">06</span>Field Dictionary</h2>
+      <div class="table-wrap"><table>
+        <tr><th>Field</th><th>Tipe</th><th>Wajib</th><th>Keterangan</th></tr>
+        <tr><td>{{FIELD_NAME}}</td><td>{{FIELD_TYPE}}</td><td>{{FIELD_REQUIRED}}</td><td>{{FIELD_NOTE}}</td></tr>
+      </table></div>
+    </section>
+
+    <section id="tombol">
+      <h2><span class="num">07</span>Tombol Aksi &amp; Perilaku</h2>
+      <div class="table-wrap"><table>
+        <tr><th>Tombol</th><th>Kondisi Muncul</th><th>Perilaku</th></tr>
+        <tr><td>{{BUTTON_NAME}}</td><td>{{BUTTON_CONDITION}}</td><td>{{BUTTON_BEHAVIOR}}</td></tr>
+      </table></div>
+    </section>
+
+    <section id="audit">
+      <h2><span class="num">08</span>Audit Trail &amp; Access</h2>
+      <p>{{AUDIT_DESC}}</p>
+    </section>
+
     <section id="code-queries">
-      <h2><span class="num">05</span>Query &amp; Business Logic dari Kode</h2>
+      <h2><span class="num">09</span>Query &amp; Business Logic dari Kode</h2>
       <p>Kutipan langsung dari source code — query LINQ/join asli beserta penjelasannya. Bukan query buat verifikasi TSD ini, tapi query yang beneran jalan di aplikasi produksi/dev.</p>
 
       <h3>1. {{QUERY_TITLE_1}} — <code>{{METHOD_NAME_1}}()</code></h3>
@@ -167,7 +159,7 @@ flowchart LR
     </section>
 
     <section id="api">
-      <h2><span class="num">06</span>API Endpoint Specification</h2>
+      <h2><span class="num">10</span>API Endpoint Specification</h2>
       <h3><code>{{CONTROLLER_NAME}}</code> — <code>{{ROUTE_PREFIX}}</code></h3>
       <div class="table-wrap"><table>
         <tr><th>Method</th><th>Action</th><th>Parameter</th><th>Return</th><th>Catatan</th></tr>
@@ -175,17 +167,8 @@ flowchart LR
       </table></div>
     </section>
 
-    <section id="notifikasi">
-      <h2><span class="num">07</span>Notifikasi &amp; Template Komunikasi</h2>
-      <p>{{NOTIFICATION_INTRO}}</p>
-      <div class="table-wrap"><table>
-        <tr><th>Trigger</th><th>Kapan</th><th>Penerima</th></tr>
-        <tr><td>{{TRIGGER_1}}</td><td>{{WHEN_1}}</td><td>{{RECIPIENT_1}}</td></tr>
-      </table></div>
-    </section>
-
     <section id="tech-spec">
-      <h2><span class="num">08</span>Technical Specification</h2>
+      <h2><span class="num">11</span>Technical Specification</h2>
       <h3>Technology Stack</h3>
       <div class="table-wrap"><table>
         <tr><th>Layer</th><th>Teknologi</th></tr>
@@ -199,7 +182,7 @@ flowchart LR
     </section>
 
     <section id="database">
-      <h2><span class="num">09</span>Database Architecture (ERD)</h2>
+      <h2><span class="num">12</span>Database Architecture (ERD)</h2>
       <p>{{ERD_INTRO}} — kolom &amp; FK constraint di bawah live-verified langsung dari database, bukan cuma dibaca dari ModelBuilder/migration.</p>
       <div class="diagram-card">
         <pre class="mermaid">
@@ -213,32 +196,11 @@ erDiagram
     </section>
 
     <section id="integrasi">
-      <h2><span class="num">10</span>Integrasi Sistem Eksternal</h2>
+      <h2><span class="num">13</span>Integrasi Sistem Eksternal</h2>
       <div class="table-wrap"><table>
         <tr><th>Sistem</th><th>Tujuan</th><th>Metode</th></tr>
         <tr><td>{{EXTERNAL_SYSTEM}}</td><td>{{PURPOSE}}</td><td>{{METHOD}}</td></tr>
       </table></div>
-    </section>
-
-    <section id="field-dictionary">
-      <h2><span class="num">11</span>Field Dictionary</h2>
-      <div class="table-wrap"><table>
-        <tr><th>Field</th><th>Tipe</th><th>Wajib</th><th>Keterangan</th></tr>
-        <tr><td>{{FIELD_NAME}}</td><td>{{FIELD_TYPE}}</td><td>{{FIELD_REQUIRED}}</td><td>{{FIELD_NOTE}}</td></tr>
-      </table></div>
-    </section>
-
-    <section id="tombol">
-      <h2><span class="num">12</span>Tombol Aksi &amp; Perilaku</h2>
-      <div class="table-wrap"><table>
-        <tr><th>Tombol</th><th>Kondisi Muncul</th><th>Perilaku</th></tr>
-        <tr><td>{{BUTTON_NAME}}</td><td>{{BUTTON_CONDITION}}</td><td>{{BUTTON_BEHAVIOR}}</td></tr>
-      </table></div>
-    </section>
-
-    <section id="audit">
-      <h2><span class="num">13</span>Audit Trail &amp; Access</h2>
-      <p>{{AUDIT_DESC}}</p>
     </section>
 
     <section id="gap">
