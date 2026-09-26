@@ -60,6 +60,12 @@
       <p><strong>In-scope (aktif):</strong> {{SCOPE_IN}}</p>
       <!-- Kalau ada fitur yang kodenya ada tapi UI-nya non-aktif/deprecated, tulis di sini pakai .callout.warn -->
       <h3>Glossary</h3>
+      <!-- Wajib-kondisional (core doc §2): kalau modul punya istilah/singkatan/status-code domain-spesifik
+           yang gak self-explanatory, isi tabel ini. Kalau semua istilah udah jelas, hapus section ini
+           dan ganti dengan 1 baris <p> singkat kenapa di-skip.
+           Tiap definisi WAJIB ada bukti sumber di kode (comment/string literal/label UI/nama enum).
+           Kalau istilah cuma singkatan tanpa penjelasan eksplisit di kode, JANGAN nebak pede —
+           tulis definisi tentatif + tandai "(perlu konfirmasi user — gak ada penjelasan eksplisit di kode)". -->
       <div class="table-wrap"><table>
         <tr><th>Term</th><th>Definisi</th></tr>
         <tr><td>{{TERM_1}}</td><td>{{DEFINISI_1}}</td></tr>
@@ -105,17 +111,30 @@ flowchart LR
       <h3>0. Alur Teknis Lengkap per Aksi (Menu → Tombol → Controller → Service → DB → Response → View)</h3>
       <p>Wajib diisi untuk minimal 2-3 aksi utama modul ini — lihat panduan lengkap di core doc §2a. Diagram visualnya ada di Bagian 09, di sini versi teks step-by-step.</p>
       <h4>A. {{AKSI_1_NAMA}}</h4>
-      <ol>
+
+      <h5>1. Tombol &amp; Action</h5>
+      <ul>
         <li><strong>Menu:</strong> {{AKSI_1_MENU}}</li>
         <li><strong>Tombol:</strong> {{AKSI_1_TOMBOL}}</li>
         <li><strong>Client:</strong> {{AKSI_1_CLIENT_JS}}</li>
-        <li><strong>Request:</strong> {{AKSI_1_METHOD}} <code>{{AKSI_1_ENDPOINT}}</code>, body {{AKSI_1_REQUEST_BODY}}</li>
-        <li><strong>Controller:</strong> {{AKSI_1_CONTROLLER}}</li>
-        <li><strong>Service:</strong> {{AKSI_1_SERVICE}}</li>
-        <li><strong>DB:</strong> {{AKSI_1_DB_TABLES}}</li>
-        <li><strong>Response:</strong> {{AKSI_1_RESPONSE_SHAPE}}</li>
-        <li><strong>Efek ke View:</strong> {{AKSI_1_VIEW_EFFECT}}</li>
-      </ol>
+      </ul>
+
+      <h5>2. Controller, Request Body &amp; Response</h5>
+      <p><strong>Request:</strong> {{AKSI_1_METHOD}} <code>{{AKSI_1_ENDPOINT}}</code></p>
+      <pre><code>{{AKSI_1_REQUEST_BODY_JSON}}</code></pre>
+      <p><strong>Controller:</strong> {{AKSI_1_CONTROLLER}}</p>
+      <p><strong>Response:</strong></p>
+      <pre><code>{{AKSI_1_RESPONSE_BODY_JSON}}</code></pre>
+
+      <h5>3. Service — Logic &amp; Alur ke DAL</h5>
+      <p>{{AKSI_1_SERVICE}}</p>
+
+      <h5>4. Mapping Data → Kolom DAL</h5>
+      <div class="table-wrap"><table>
+        <tr><th>Field</th><th>Kolom Fisik Tabel</th><th>Tipe DB</th><th>Kenapa disimpan begitu</th></tr>
+        <tr><td>{{AKSI_1_MAP_FIELD}}</td><td>{{AKSI_1_MAP_COLUMN}}</td><td>{{AKSI_1_MAP_TYPE}}</td><td>{{AKSI_1_MAP_REASON}}</td></tr>
+      </table></div>
+      <p><strong>Efek ke View:</strong> {{AKSI_1_VIEW_EFFECT}}</p>
 
       <h3>Field Input</h3>
       <ul>
@@ -202,10 +221,22 @@ flowchart LR
     <section id="tech-spec">
       <h2><span class="num">11</span>Technical Specification</h2>
       <h3>Technology Stack</h3>
+      <!-- Versi & Package WAJIB dari manifest dependency asli (package.json/.csproj/requirements.txt/go.mod/
+           Gemfile/pom.xml/composer.json/Cargo.toml/dst — sesuaikan bahasa/framework project ini),
+           JANGAN nebak dari import/using statement. -->
       <div class="table-wrap"><table>
-        <tr><th>Layer</th><th>Teknologi</th></tr>
-        <tr><td>{{LAYER}}</td><td>{{TECH}}</td></tr>
+        <tr><th>Layer</th><th>Teknologi/Framework</th><th>Versi</th><th>Package/Dependency</th><th>Kegunaan</th></tr>
+        <tr><td>{{LAYER}}</td><td>{{TECH}}</td><td>{{TECH_VERSION}}</td><td>{{TECH_PACKAGE}}</td><td>{{TECH_PURPOSE}}</td></tr>
       </table></div>
+
+      <h3>Project Structure &amp; Architecture Pattern</h3>
+      <p>Folder tree ringkas, cuma bagian yang relevan ke modul ini (bukan seluruh solution/repo):</p>
+      <pre><code>{{PROJECT_STRUCTURE_TREE}}</code></pre>
+      <p><strong>Pola Arsitektur:</strong> {{ARCHITECTURE_PATTERN}}</p>
+      <!-- Kalau gak ada dokumentasi eksplisit (README/ADR/comment) yang nyebut nama pattern-nya,
+           JANGAN diklaim pasti — tulis "kemungkinan besar {{PATTERN}}, disimpulkan dari struktur folder
+           (Controller/Service/Repository/Entity terpisah, dst)" alih-alih nyebut sebagai fakta baku. -->
+
       <h3>RBAC Matrix</h3>
       <div class="table-wrap"><table>
         <tr><th>Layer</th><th>Sumber</th><th>Granularitas</th><th>Enforcement</th></tr>

@@ -119,7 +119,7 @@ bakal keliatan buggy walau isinya bener):
 
 **Grup 1 — Overview & Proses Bisnis**
 00. Riwayat Revisi
-01. Latar Belakang & Tujuan (business background, objectives, scope in/out, glossary)
+01. Latar Belakang & Tujuan (business background, objectives, scope in/out, glossary — **wajib-kondisional**: kalau modul punya istilah/singkatan/status-code domain-spesifik yang gak self-explanatory dari nama field-nya sendiri (mis. "PIC Mitigation" vs "PIC Assessment", kode status `ASSESS_REV`), glossary WAJIB ada; kalau semua istilah udah jelas, boleh di-skip tapi tulis 1 baris kenapa. **Definisi WAJIB ada bukti sumber di kode** — comment, string literal, label UI, atau nama enum yang eksplisit nyebut artinya. Kalau istilahnya cuma singkatan/kode pendek TANPA penjelasan eksplisit di manapun di codebase (mis. singkatan department 2-3 huruf), JANGAN nebak definisi dengan pede — tulis definisi tentatif + tandai `(perlu konfirmasi user — gak ada penjelasan eksplisit di kode)`. AI baca kode cuma dapet proxy istilah, bukan pengetahuan domain institusional (manufacturing/tambang/commercial/sales dst bisa beda arti walau singkatan sama) — tandai jelas biar user tau bagian mana yang wajib di-review, jangan dibiarin keliatan pasti padahal tebakan.)
 02. Alur Bisnis / Proses (flow diagram, state machine, transisi & trigger, side-effect tiap perubahan status)
 
 **Grup 2 — Spesifikasi Fungsional**
@@ -133,7 +133,7 @@ bakal keliatan buggy walau isinya bener):
 **Grup 3 — Spesifikasi Teknis & Referensi**
 09. Query & Business Logic dari Kode (kutipan LINQ/kode asli + terjemahan raw SQL buat DB editor + penjelasan, **plus subsection "0. Peta Alur Teknis" — diagram visual dari §2a, WAJIB**)
 10. API Endpoint Specification (per controller/API class, method/action/param/return/catatan)
-11. Technical Specification (tech stack table, RBAC/access matrix)
+11. Technical Specification — **Technology Stack WAJIB detail**: tabel `Layer | Teknologi/Framework | Versi | Package/Dependency | Kegunaan`. Versi & nama package **WAJIB dibaca langsung dari file manifest dependency asli project** (sesuaikan bahasa/framework yang dipakai — bisa lebih dari satu bahasa dalam 1 project, cek semua yang relevan ke modul): `.csproj`/`packages.config` (.NET), `package.json`/`package-lock.json` (Node/JS/TS), `requirements.txt`/`Pipfile`/`pyproject.toml` (Python), `go.mod` (Go), `Gemfile` (Ruby), `pom.xml`/`build.gradle` (Java/Kotlin), `composer.json` (PHP), `Cargo.toml` (Rust), dst — pola sama, tinggal sesuaikan file manifest-nya. JANGAN nebak versi dari `using`/`import` statement doang. Plus **Project Structure & Architecture Pattern** (subsection baru): folder tree ringkas 2-3 level yang relevan ke modul ini aja (bukan seluruh solution/repo) + nama pola arsitektur (Layered/Clean Architecture/Repository-Service/MVC/dst) — pattern ini WAJIB disimpulkan dari struktur folder & pemisahan tanggung jawab yang beneran ada di kode (Controller/Service/Repository/Entity terpisah rapi = indikasi Layered, dst), **JANGAN diklaim pasti kalau gak ada dokumentasi eksplisit** (README/ADR/comment) yang nyebut nama pattern-nya — tulis "kemungkinan besar X, disimpulkan dari struktur folder" alih-alih nyebut nama pattern sebagai fakta baku. Plus RBAC/access matrix.
 12. Database Architecture (ERD) — **tabel teks kolom LENGKAP per tabel (semua kolom, bukan ringkasan "kolom kunci")**, real FK constraints (cek live, jangan cuma baca ModelBuilder), diagram Mermaid `erDiagram` **WAJIB pakai attribute block per entity** (kolom kunci + tipe di dalam diagram, bukan cuma kotak nama tabel + garis relasi — lihat contoh di §2a), definisi view/SP yang dipakai
 13. Integrasi Sistem Eksternal
 14. Room of Improvement (ROI)
@@ -146,17 +146,29 @@ tombol Submit/Save utama + 1-2 aksi representatif lain seperti generate/lookup/a
 cuma field mana yang diisi, tapi jalur lengkap dari klik sampai balik ke layar. Ini muncul di 2
 tempat, isinya saling melengkapi:
 
-1. **Bagian 03 (Modul Input Data), subsection "0. Alur Teknis Lengkap per Aksi"** — versi teks
-   naratif, per aksi, numbered list, mencakup tiap titik ini:
-   - **Menu**: dari mana user mengakses fitur ini.
-   - **Tombol**: nama tombol/selector elemen di View.
-   - **Client**: function JS yang jalan, validasi apa yang dicek sebelum kirim request.
-   - **Request**: method HTTP + endpoint + shape body request (nama field-field pentingnya).
-   - **Controller**: nama class + action + attribute otorisasi yang mengunci endpoint itu.
-   - **Service**: nama method service yang benar-benar jalankan business logic.
-   - **DB**: DbContext + nama tabel yang disentuh (insert/update/select).
-   - **Response**: shape response yang balik ke client.
-   - **Efek ke View**: apa yang berubah di UI setelah response diterima (re-render, redirect, reload, dst).
+1. **Bagian 03 (Modul Input Data), subsection "0. Alur Teknis Lengkap per Aksi"** — per aksi,
+   JANGAN pakai 1 numbered list panjang campur semua titik (susah dibaca, poin controller/service/DB
+   ketelen jadi satu baris). WAJIB dipecah jadi **4 sub-blok berjudul (`<h5>`)**, urutan tetap:
+
+   - **1. Tombol & Action** — Menu (dari mana user akses fitur), Tombol (nama/selector elemen di
+     View), Client (function JS yang jalan + validasi apa yang dicek sebelum kirim request).
+   - **2. Controller, Request Body & Response** — method HTTP + endpoint; **request body sebagai
+     code block JSON** (bukan cuma disebut nama field di prosa — tulis shape aslinya, field penting
+     + tipe singkat, boleh ringkas pakai `...` buat bagian yang gak relevan); nama class controller
+     + action + attribute otorisasi; **response sebagai code block JSON** juga (shape yang beneran
+     balik ke client).
+   - **3. Service — Logic & Alur ke DAL** — nama method service yang jalankan business logic,
+     urutan proses (termasuk transaction begin/commit kalau ada), DbContext yang dipanggil + nama
+     tabel yang disentuh per operasi (insert/update/select), apa yang di-return dari service balik
+     ke controller.
+   - **4. Mapping Data → Kolom DAL** — tabel 4 kolom: **Field (request/service)** | **Kolom Fisik
+     Tabel** | **Tipe DB** | **Kenapa disimpan begitu** (alasan singkat: FK ke master mana, kolom
+     ini dipakai buat apa di query lain, atau catatan kalau ada mismatch/quirk seperti nullable vs
+     non-nullable, tanpa constraint, dst — kalau ada ROI-worthy quirk, tetap tulis di sini + silang
+     rujuk "lihat Bagian 14").
+
+   Tutup tiap aksi dengan 1 baris **Efek ke View** (apa yang berubah di UI setelah response —
+   re-render, redirect, reload) — taruh sebagai baris terakhir sub-blok 4, jangan bikin sub-blok ke-5.
 2. **Bagian 09 (Query & Business Logic), subsection "0. Peta Alur Teknis"** — versi visual, 1
    `diagram-card` per aksi, pakai Mermaid `flowchart LR`, node per titik yang sama seperti daftar
    di atas (Tombol → Client → Request → Controller → Service → DB → Response → View), dihubungkan
