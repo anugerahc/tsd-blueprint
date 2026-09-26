@@ -62,27 +62,49 @@ Berhenti begitu 1 unit genuinely cuma 1 alur transaksi tunggal (leaf) — leaf i
   cuma butuh 1 level pecahan (jangan over-engineer penamaan untuk kasus yang gak butuh).
 - **Tiap level yang punya anak (non-leaf)** dapat 1 dokumen **"Overview"** — TIDAK 16-section penuh,
   cuma: (a) 1 diagram Mermaid `flowchart` tingkat tinggi peta hubungan antar anak-anaknya, (b) 1 tabel
-  daftar anak dengan link `<a href>` ke tiap TSD/Overview anaknya + ringkasan 1-2 kalimat tiap anak,
-  (c) kalau level ini adalah root/E2E (representasi keseluruhan sistem), boleh tambah 1 diagram alur
-  bisnis end-to-end lintas semua module. Overview dibuat kalau ada ≥2 anak di level itu (leaf tunggal
-  gak butuh Overview di atasnya).
-- Overview WAJIB link 2 arah: tiap anak link balik ke Overview parent-nya (breadcrumb 1 baris di
-  bagian atas cover/§01), Overview link ke semua anak langsungnya (bukan cucu — biar gak jadi 1
-  halaman raksasa, navigasi berjenjang sesuai hierarki).
+  daftar anak (nama dokumen + ringkasan 1-2 kalimat tiap anak — lihat aturan link di bawah, JANGAN
+  `<a href>`), (c) kalau level ini adalah root/E2E (representasi keseluruhan sistem), boleh tambah 1
+  diagram alur bisnis end-to-end lintas semua module. Overview dibuat kalau ada ≥2 anak di level itu
+  (leaf tunggal gak butuh Overview di atasnya).
+- Overview WAJIB "link" 2 arah secara REFERENSI (bukan hyperlink — lihat aturan di bawah): tiap anak
+  sebut balik nama dokumen Overview parent-nya (breadcrumb teks 1 baris di bagian atas cover/§01, mis.
+  "Bagian dari: {Nama Overview Parent}"), Overview sebut nama semua anak langsungnya (bukan cucu).
 - Overview HANYA dibuat kalau user setuju/minta, ATAU otomatis dibuat bersamaan saat plugin
   memutuskan sendiri untuk pecah (kondisi sinyal kuat di atas) — supaya user tetap punya entry-point,
   jangan pecah jadi N file lepas tanpa cara navigasi antar mereka.
 
+**⚠️ Cross-document reference — WAJIB plain text, JANGAN PERNAH pakai `<a href>` antar TSD/Overview
+terpisah (beda dari cross-reference DALAM 1 dokumen yang sama — itu diatur di §2, juga plain text tapi
+alasannya beda).** Ini beda dari yang biasa diasumsikan: begitu dokumen-dokumen ini dipecah jadi file
+terpisah, TIDAK ADA yang bisa menjamin mereka tetap berdampingan di folder yang sama selamanya —
+skenario nyata yang harus diasumsikan sebagai DEFAULT (bukan edge case): (1) tiap dokumen di-upload
+satu-satu ke Notion/Confluence/Google Docs sebagai page independen, hierarki foldernya hilang total;
+(2) tiap superapp klien nge-deploy koleksi TSD ini ke path web yang beda-beda, gak ada 1 struktur path
+yang valid di semua deployment; (3) dokumen di-share/di-forward satuan ke orang lain yang cuma dapat
+1 file, bukan seluruh koleksi. Kalau ada `href="../Nama-Lain/index.html"` yang di-hardcode, begitu
+salah satu skenario di atas terjadi (yang justru paling umum, bukan paling jarang), link itu jadi
+404/rusak — MESKIPUN kebetulan waktu di-generate &amp; ditest lokal keliatan jalan. **Default WAJIB
+plain text** (nama dokumen dalam <code>&lt;code&gt;</code> atau <strong>bold</strong>, tanpa `<a href>`
+apapun) — pembaca cari dokumennya sendiri di koleksi/workspace mereka (search Notion, cari file, dst).
+Kalau user EKSPLISIT bilang seluruh koleksi TSD ini PASTI akan selalu dibuka dari 1 struktur folder
+yang gak berubah (mis. cuma dipakai lokal di 1 device, gak akan di-upload ke Notion/dipisah), boleh
+pakai `<a href>` relatif SETELAH konfirmasi eksplisit itu — TAPI ini pengecualian yang harus diminta,
+bukan default. Berlaku untuk: breadcrumb Overview↔anak, tabel daftar anak di Overview, dan tabel
+"Modul Terkait (Internal)" Bagian 13 di semua leaf (kolom "TSD" isinya nama dokumen plain text, bukan
+link — beda dari versi rule sebelumnya yang masih pakai `<a href>` di kolom ini, sudah diperbaiki).
+
 **Cross-cutting concerns (berlaku rekursif di semua level, bukan cuma 1 level tertentu):**
-- Bagian 13 "Modul Terkait (Internal)" — dipakai untuk link antar SIBLING di level manapun (dalam 1
-  parent yang sama, atau lintas parent kalau memang ada bukti kode konkret yang menghubungkan).
+- Bagian 13 "Modul Terkait (Internal)" — dipakai untuk referensi antar SIBLING di level manapun (dalam
+  1 parent yang sama, atau lintas parent kalau memang ada bukti kode konkret yang menghubungkan) —
+  plain text nama dokumen, ikuti aturan cross-document reference di atas.
 - Master Data Dependencies (Bagian 12) yang dipakai 2+ leaf: JANGAN diduplikasi full di semua leaf.
   Owner-nya = leaf yang benar-benar CRUD tabel itu (kalau ada); kalau gak ada satupun yang CRUD
   (tabel murni eksternal/cross-context read-only dari semua leaf), owner-nya = leaf yang paling
   bergantung (paling sering baca buat kalkulasi/keputusan, atau paling duluan butuh detailnya saat
   investigasi). Leaf lain cukup 1 baris ringkas + rujukan eksplisit: `"Detail lengkap lihat TSD
-  {NamaLeaf pemilik}, Bagian 12"` (plain text di badan kalimat, boleh clickable kalau ditaruh di
-  tabel Bagian 13). Mencegah 1 tabel master didokumentasikan beda-beda di banyak tempat lalu drift.
+  {NamaLeaf pemilik}, Bagian 12"` — plain text, ikuti aturan cross-document reference di atas, boleh
+  ditaruh juga sebagai baris di tabel Bagian 13. Mencegah 1 tabel master didokumentasikan beda-beda
+  di banyak tempat lalu drift.
 - Section "0. Alur Teknis Lengkap per Aksi" (Bagian 03, §2a) tiap leaf WAJIB spesifik ke aksi
   leaf itu sendiri — TIDAK boleh diringkas dengan alasan "sudah kebahas di Overview induknya".
   Overview levelnya beda (ringkasan lintas-unit), bukan pengganti detail teknis per leaf — inilah
