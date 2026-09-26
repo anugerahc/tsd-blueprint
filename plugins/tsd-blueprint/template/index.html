@@ -281,6 +281,38 @@ erDiagram
 
       <h3>Definisi View / Stored Procedure Terkait</h3>
       <pre><code>{{VIEW_SQL_DEFINITION}}</code></pre>
+
+      <h3>Master Data Dependencies</h3>
+      <!-- WAJIB kalau relevan (core doc §2): tabel yang cuma DIBACA modul ini (bukan di-CRUD modul ini
+           sendiri) dan MEMPENGARUHI LOGIC/KEPUTUSAN modul — bukan sekadar dropdown LOV kosmetik.
+           Identifikasi dari PERAN tabel di kode (SELECT doang vs INSERT/UPDATE/DELETE), JANGAN nebak
+           dari prefix nama tabel (M*/Tr* dst — konvensi beda tiap project).
+           Threshold: masuk kalau tabel master itu nentuin hasil generate/kalkulasi/validasi
+           (contoh: Minquiry di i-Sure nentuin isi assessment yang di-generate). Kalau gak ada
+           tabel master yang lolos threshold ini, hapus section ini + 1 baris kenapa di-skip.
+           Tiap tabel yang lolos WAJIB didokumentasikan SELENGKAP tabel transaksi — BUKAN CUMA DB-nya:
+           kolom LENGKAP + masuk ke erDiagram yang sama (Bagian 12, relasi putus-putus/logical kalau
+           gak ada FK constraint beneran), PLUS Controller/Service yang mengelola data ini (kalau ada
+           CRUD/admin screen sendiri — sebutkan nama + endpoint, evidence dari kode; kalau murni
+           dikelola manual di DB tanpa UI, itu sendiri temuan yang wajib ditulis), PLUS View yang
+           menampilkan/mengedit data ini (kalau ada) atau sebutkan kalau cuma numpang jadi dropdown/LOV
+           di modul transaksi lain. -->
+      <p>{{MASTER_DEPENDENCY_INTRO}}</p>
+      <h4><code>{{MASTER_TABLE_1}}</code> — <span class="badge">Tier Kritikal</span> <span class="badge">{{READONLY_OR_EDITABLE}}</span></h4>
+      <p><strong>Sumber:</strong> {{MASTER_SOURCE}} (native/cross-context) — <strong>Kenapa relevan:</strong> {{MASTER_RELEVANCE}}</p>
+      <p><strong>Dikelola lewat:</strong> {{MASTER_CONTROLLER_SERVICE}} (controller/service pengelola, kalau ada — kalau tidak ada UI/CRUD sama sekali, tulis eksplisit) — <strong>Ditampilkan/diedit di:</strong> {{MASTER_VIEW}} (path view, atau "cuma numpang dropdown di {{MODULE_NAME}}" kalau gak punya screen sendiri)</p>
+      <div class="table-wrap"><table>
+        <tr><th>Kolom</th><th>Tipe</th><th>Null</th><th>Catatan</th></tr>
+        <tr><td>{{MASTER_COLUMN_1}}</td><td>{{MASTER_TYPE_1}}</td><td>{{MASTER_NULLABLE_1}}</td><td>{{MASTER_NOTE_1}}</td></tr>
+      </table></div>
+
+      <!-- Tier Referensi: master yang cuma dropdown/LOV deskriptif, JANGAN di-skip — cukup 1 baris di tabel ini,
+           gak perlu kolom lengkap/erDiagram. WAJIB ada, bukan opsional. -->
+      <h4>Master Referensi Lainnya (dropdown/LOV, gak mengubah alur/keputusan)</h4>
+      <div class="table-wrap"><table>
+        <tr><th>Tabel</th><th>Dipakai buat apa</th><th>Dikelola di</th></tr>
+        <tr><td>{{MASTER_REF_TABLE_1}}</td><td>{{MASTER_REF_USAGE_1}}</td><td>{{MASTER_REF_MANAGED_1}}</td></tr>
+      </table></div>
     </section>
 
     <section id="integrasi">
@@ -288,6 +320,16 @@ erDiagram
       <div class="table-wrap"><table>
         <tr><th>Sistem</th><th>Tujuan</th><th>Metode</th></tr>
         <tr><td>{{EXTERNAL_SYSTEM}}</td><td>{{PURPOSE}}</td><td>{{METHOD}}</td></tr>
+      </table></div>
+
+      <h3>Modul Terkait (Internal)</h3>
+      <!-- WAJIB kalau ada bukti kode: modul LAIN di solution yang SAMA yang nyata terhubung ke modul ini
+           (kolom yang eksplisit nunjuk ke modul lain, tabel di-share, atau panggilan controller/service
+           modul lain langsung). Kalau gak ada, hapus + 1 baris kenapa. JANGAN auto-generate TSD modul
+           lain tanpa diminta eksplisit — cukup catat keterkaitannya + link ke TSD-nya KALAU sudah ada. -->
+      <div class="table-wrap"><table>
+        <tr><th>Modul</th><th>Bukti Keterkaitan</th><th>Arah</th><th>TSD</th></tr>
+        <tr><td>{{RELATED_MODULE_1}}</td><td>{{RELATED_EVIDENCE_1}}</td><td>{{RELATED_DIRECTION_1}}</td><td><a href="{{RELATED_TSD_LINK_1}}">{{RELATED_TSD_LINK_1}}</a> (kalau sudah ada) / <em>belum ada TSD-nya</em></td></tr>
       </table></div>
     </section>
 
