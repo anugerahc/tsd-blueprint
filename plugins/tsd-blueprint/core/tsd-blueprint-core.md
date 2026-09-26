@@ -10,6 +10,61 @@ User minta dibuatkan TSD / dokumentasi teknis buat 1 module tertentu dalam sebua
 Kalau module-nya belum jelas atau scope-nya ambigu (lebih dari 1 module, atau "seluruh sistem"),
 STOP dan tanya dulu module mana yang dimaksud — jangan asumsi.
 
+## 0b. Module Besar dengan Banyak Sub-flow — Deteksi &amp; Keputusan Pecah TSD
+
+Sebelum mulai investigasi (setelah scope module dikonfirmasi di §0), cek dulu apakah module ini
+sebenarnya payung dari beberapa **sub-flow independen** — bukan 1 alur transaksi tunggal. Kalau
+dipaksa jadi 1 TSD, tiap sub-flow bakal keliatan diringkas/dangkal (alur teknis per aksi jadi
+generic, gak sedetail kalau didokumentasikan sendiri) — ini gap yang harus dihindari.
+
+**Sinyal kandidat pecah (cukup 2 dari daftar ini buat jadi kandidat kuat):**
+1. Ada 2+ pasangan Controller+Service yang **masing-masing punya state machine/status sendiri
+   yang independen** (bukan cuma variasi CRUD dari flow yang sama) — misal satu punya status
+   `DRAFT→SUBMIT→APPROVE`, yang lain punya `REQ→REVIEW→DONE` yang gak nyambung langsung.
+2. Total baris service tiap sub-flow individually besar (kasar: 1000+ baris per service) dan
+   digabung jadi jauh lebih besar dari TSD module lain yang sudah pernah dibuat di project ini.
+3. Tiap sub-flow punya tabel transaksi header sendiri yang gak di-CRUD sub-flow lain (walau boleh
+   dibaca cross — itu nanti masuk Master Data Dependencies antar sub-TSD, lihat di bawah).
+4. User menyebut nama-nama bagian ini sebagai entitas terpisah secara natural (mis. "VerFor",
+   "Regal", "BPOM Process" disebut beda-beda, bukan "step 1/2/3 dari 1 hal yang sama").
+
+**Kalau sinyal ini kuat — WAJIB tanya user dulu sebelum eksekusi, jangan asumsi sendiri:**
+sampaikan sub-flow apa aja yang terdeteksi (nama controller/service masing-masing), dan tawarkan
+2 opsi: (a) 1 TSD gabungan yang meringkas semua sub-flow (cocok kalau user cuma butuh overview
+cepat), atau (b) dipecah jadi N TSD — 1 TSD penuh 16-section per sub-flow, saling link. Kalau user
+gak menyatakan preferensi di awal (misal cuma bilang "buatkan TSD module X"), defaultnya body dulu
+1 TSD gabungan (lebih murah), dan halaman ini dipakai buat evaluasi ulang begitu user kasih feedback
+module-nya "terlalu digabung" — baru pecah retroactive.
+
+**Kalau user pilih pecah jadi N TSD:**
+
+- Tiap sub-flow dapat 1 TSD **lengkap 16-section** sendiri (bukan versi ringkas) — pakai scaffold
+  `template/` yang sama, folder/nama output sendiri. Konvensi penamaan: `{ModuleName}-{SubFlowName}`
+  (mis. `AKASIA-VerFor`, `AKASIA-Regal`, `AKASIA-BPOMProcess`) supaya grouping-nya jelas dari nama
+  file/folder, tapi tiap dokumen tetap berdiri sendiri (title/cover halaman gak perlu nyebut nomor
+  urut "1 dari 4" — cukup jelas dari nama).
+- **Bagian 13 "Modul Terkait (Internal)" WAJIB saling link antar sub-TSD dalam module besar yang
+  sama** — treat sub-flow lain persis seperti modul terkait biasa (evidence tetap harus konkret:
+  kolom yang eksplisit menunjuk, tabel di-share, atau panggilan controller/service langsung — bukan
+  cuma "sama-sama bagian dari module X"). Link pakai `<a href="../{OtherSubFlow}/index.html">` relatif
+  antar folder output kalau semua diterbitkan di lokasi yang sejajar.
+- **Master Data Dependencies (Bagian 12) yang dipakai 2+ sub-flow: JANGAN diduplikasi full di semua
+  sub-TSD.** Tentukan 1 sub-TSD sebagai "pemilik dokumentasi" tabel master itu — kandidatnya adalah
+  sub-flow yang paling bergantung ke tabel itu (paling sering baca buat kalkulasi/keputusan, atau
+  yang pertama kali butuh detail levelnya di alur kerja investigasi). Sub-TSD pemilik dokumentasikan
+  full (kolom lengkap + Controller/Service + View, sesuai aturan Tier Kritikal di §2 Bagian 12).
+  Sub-TSD lain yang cuma numpang baca tabel yang sama cukup 1 baris ringkas + rujukan eksplisit:
+  `"Detail lengkap lihat TSD {SubFlowName pemilik}, Bagian 12"` (plain text, bukan `<a href>` di
+  tengah kalimat — kecuali ditaruh sebagai link modul terkait di tabel Bagian 13 yang memang boleh
+  clickable). Ini mencegah 1 tabel master didokumentasikan 3x berbeda gara-gara diupdate di 1 tempat
+  doang lalu drift dari yang lain.
+- Section "0. Alur Teknis Lengkap per Aksi" (Bagian 03, lihat §2a) di tiap sub-TSD WAJIB spesifik ke
+  aksi utama sub-flow itu sendiri — jangan generic/diringkas dengan alasan "kan sudah disebut di TSD
+  gabungan sebelumnya". Ini justru alasan utama kenapa dipecah: supaya tiap sub-flow bisa didalami.
+- Opsional (tanya user, jangan bikin sendiri tanpa diminta): 1 halaman "Overview" ringan berisi cuma
+  diagram/tabel peta hubungan antar sub-TSD (bukan TSD 16-section penuh) — kalau user mau punya
+  entry-point tunggal buat module besar itu.
+
 ## 1. Aturan Keras (non-negotiable)
 
 1. **Setiap klaim WAJIB diverifikasi dari source code aktual dan/atau live database query.**
