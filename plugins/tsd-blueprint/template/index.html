@@ -101,6 +101,22 @@ flowchart LR
     <section id="input-data">
       <h2><span class="num">03</span>Modul Input Data</h2>
       <p>{{INPUT_DATA_INTRO}}</p>
+
+      <h3>0. Alur Teknis Lengkap per Aksi (Menu → Tombol → Controller → Service → DB → Response → View)</h3>
+      <p>Wajib diisi untuk minimal 2-3 aksi utama modul ini — lihat panduan lengkap di core doc §2a. Diagram visualnya ada di Bagian 09, di sini versi teks step-by-step.</p>
+      <h4>A. {{AKSI_1_NAMA}}</h4>
+      <ol>
+        <li><strong>Menu:</strong> {{AKSI_1_MENU}}</li>
+        <li><strong>Tombol:</strong> {{AKSI_1_TOMBOL}}</li>
+        <li><strong>Client:</strong> {{AKSI_1_CLIENT_JS}}</li>
+        <li><strong>Request:</strong> {{AKSI_1_METHOD}} <code>{{AKSI_1_ENDPOINT}}</code>, body {{AKSI_1_REQUEST_BODY}}</li>
+        <li><strong>Controller:</strong> {{AKSI_1_CONTROLLER}}</li>
+        <li><strong>Service:</strong> {{AKSI_1_SERVICE}}</li>
+        <li><strong>DB:</strong> {{AKSI_1_DB_TABLES}}</li>
+        <li><strong>Response:</strong> {{AKSI_1_RESPONSE_SHAPE}}</li>
+        <li><strong>Efek ke View:</strong> {{AKSI_1_VIEW_EFFECT}}</li>
+      </ol>
+
       <h3>Field Input</h3>
       <ul>
         <li>{{FIELD_1}}</li>
@@ -150,6 +166,22 @@ flowchart LR
       <h2><span class="num">09</span>Query &amp; Business Logic dari Kode</h2>
       <p>Kutipan langsung dari source code — query LINQ/join asli beserta penjelasannya. Bukan query buat verifikasi TSD ini, tapi query yang beneran jalan di aplikasi produksi/dev.</p>
 
+      <h3>0. Peta Alur Teknis — Tombol → Controller → Service → DB → Response</h3>
+      <p>Versi diagram dari alur teks lengkap di Bagian 03. Satu <code>diagram-card</code> per aksi utama.</p>
+      <div class="diagram-card">
+        <pre class="mermaid">
+flowchart LR
+    A["Tombol {{AKSI_1_NAMA}}"] --> B["Client: {{AKSI_1_CLIENT_JS}}"]
+    B --> C["{{AKSI_1_METHOD}} {{AKSI_1_ENDPOINT}}"]
+    C --> D["{{AKSI_1_CONTROLLER}}"]
+    D --> E["{{AKSI_1_SERVICE}}"]
+    E --> F[("{{AKSI_1_DB_TABLES}}")]
+    F --> G["Response: {{AKSI_1_RESPONSE_SHAPE}}"]
+    G --> H["View: {{AKSI_1_VIEW_EFFECT}}"]
+        </pre>
+        <div class="diagram-caption">Flow — tombol {{AKSI_1_NAMA}}. Detail request/response di Bagian 03.</div>
+      </div>
+
       <h3>1. {{QUERY_TITLE_1}} — <code>{{METHOD_NAME_1}}()</code></h3>
       <p>{{QUERY_CONTEXT_1}}</p>
       <pre><code>{{LINQ_CODE_1}}</code></pre>
@@ -187,10 +219,34 @@ flowchart LR
       <div class="diagram-card">
         <pre class="mermaid">
 erDiagram
+    {{ENTITY_1}} {
+        {{TYPE}} {{COLUMN_1}} PK
+        {{TYPE}} {{COLUMN_2}} FK
+        {{TYPE}} {{COLUMN_3}}
+    }
+    {{ENTITY_2}} {
+        {{TYPE}} {{COLUMN_1}} PK
+        {{TYPE}} {{COLUMN_2}}
+    }
     {{ENTITY_1}} ||--o{ {{ENTITY_2}} : "{{RELATION}}"
         </pre>
-        <div class="diagram-caption">{{ERD_CAPTION}}</div>
+        <div class="diagram-caption">{{ERD_CAPTION}} — attribute block per entity WAJIB diisi (kolom kunci + tipe), jangan cuma nama tabel + garis relasi.</div>
       </div>
+
+      <h3>Tabel Fisik &amp; Kolom Lengkap (live-verified)</h3>
+      <p>Satu <code>h4</code> + tabel per entity. Ini WAJIB berisi <strong>SEMUA kolom</strong> tabel fisik (bukan ringkasan "kolom kunci") — kalau kolomnya banyak, tetap tulis semua, jangan dipotong.</p>
+      <h4><code>{{ENTITY_1}}</code> — PK <code>{{PK_COLUMN}}</code></h4>
+      <div class="table-wrap"><table>
+        <tr><th>Kolom</th><th>Tipe</th><th>Null</th><th>Catatan</th></tr>
+        <tr><td>{{COLUMN_1}}</td><td>{{TYPE_1}}</td><td>{{NULLABLE_1}}</td><td>{{NOTE_1}}</td></tr>
+      </table></div>
+
+      <h3>FK Constraint Fisik (live-verified, nama asli)</h3>
+      <div class="table-wrap"><table>
+        <tr><th>Constraint</th><th>Tabel.Kolom</th><th>→ Referensi</th></tr>
+        <tr><td>{{FK_CONSTRAINT_NAME}}</td><td>{{FK_TABLE_COLUMN}}</td><td>{{FK_REFERENCE}}</td></tr>
+      </table></div>
+
       <h3>Definisi View / Stored Procedure Terkait</h3>
       <pre><code>{{VIEW_SQL_DEFINITION}}</code></pre>
     </section>

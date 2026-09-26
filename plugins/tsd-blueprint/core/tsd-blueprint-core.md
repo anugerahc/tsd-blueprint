@@ -123,7 +123,7 @@ bakal keliatan buggy walau isinya bener):
 02. Alur Bisnis / Proses (flow diagram, state machine, transisi & trigger, side-effect tiap perubahan status)
 
 **Grup 2 — Spesifikasi Fungsional**
-03. Modul Input Data (field per form/tab, auto-generate logic, format nomor dokumen)
+03. Modul Input Data (field per form/tab, auto-generate logic, format nomor dokumen, **plus subsection "0. Alur Teknis Lengkap per Aksi" — lihat §2a, WAJIB**)
 04. Modul Validasi / Business Rule (generation logic, perhitungan, validasi — tandai mana yang cuma client-side)
 05. Notifikasi & Template Komunikasi
 06. Field Dictionary
@@ -131,22 +131,66 @@ bakal keliatan buggy walau isinya bener):
 08. Audit Trail & Access
 
 **Grup 3 — Spesifikasi Teknis & Referensi**
-09. Query & Business Logic dari Kode (kutipan LINQ/kode asli + terjemahan raw SQL buat DB editor + penjelasan)
+09. Query & Business Logic dari Kode (kutipan LINQ/kode asli + terjemahan raw SQL buat DB editor + penjelasan, **plus subsection "0. Peta Alur Teknis" — diagram visual dari §2a, WAJIB**)
 10. API Endpoint Specification (per controller/API class, method/action/param/return/catatan)
 11. Technical Specification (tech stack table, RBAC/access matrix)
-12. Database Architecture (ERD) — full column, real FK constraints (cek live, jangan cuma baca ModelBuilder), definisi view/SP yang dipakai
+12. Database Architecture (ERD) — **tabel teks kolom LENGKAP per tabel (semua kolom, bukan ringkasan "kolom kunci")**, real FK constraints (cek live, jangan cuma baca ModelBuilder), diagram Mermaid `erDiagram` **WAJIB pakai attribute block per entity** (kolom kunci + tipe di dalam diagram, bukan cuma kotak nama tabel + garis relasi — lihat contoh di §2a), definisi view/SP yang dipakai
 13. Integrasi Sistem Eksternal
 14. Room of Improvement (ROI)
 15. Appendix — Koneksi Database (nama KEY connection string per environment, method decrypt-nya — JANGAN taruh ciphertext/credential asli)
+
+## 2a. Peta Alur Teknis (WAJIB, per aksi utama)
+
+Setiap TSD wajib memetakan alur teknis end-to-end untuk minimal 2-3 aksi utama modul (biasanya
+tombol Submit/Save utama + 1-2 aksi representatif lain seperti generate/lookup/approve) — bukan
+cuma field mana yang diisi, tapi jalur lengkap dari klik sampai balik ke layar. Ini muncul di 2
+tempat, isinya saling melengkapi:
+
+1. **Bagian 03 (Modul Input Data), subsection "0. Alur Teknis Lengkap per Aksi"** — versi teks
+   naratif, per aksi, numbered list, mencakup tiap titik ini:
+   - **Menu**: dari mana user mengakses fitur ini.
+   - **Tombol**: nama tombol/selector elemen di View.
+   - **Client**: function JS yang jalan, validasi apa yang dicek sebelum kirim request.
+   - **Request**: method HTTP + endpoint + shape body request (nama field-field pentingnya).
+   - **Controller**: nama class + action + attribute otorisasi yang mengunci endpoint itu.
+   - **Service**: nama method service yang benar-benar jalankan business logic.
+   - **DB**: DbContext + nama tabel yang disentuh (insert/update/select).
+   - **Response**: shape response yang balik ke client.
+   - **Efek ke View**: apa yang berubah di UI setelah response diterima (re-render, redirect, reload, dst).
+2. **Bagian 09 (Query & Business Logic), subsection "0. Peta Alur Teknis"** — versi visual, 1
+   `diagram-card` per aksi, pakai Mermaid `flowchart LR`, node per titik yang sama seperti daftar
+   di atas (Tombol → Client → Request → Controller → Service → DB → Response → View), dihubungkan
+   panah. Kalau 1 aksi punya percabangan (misal sumber data beda tergantung parameter), gambarkan
+   percabangannya (`-- kondisi -->`) alih-alih bikin diagram terpisah.
+
+Tujuannya: orang yang baru pertama pegang modul ini bisa langsung ngerti jalur teknisnya tanpa
+harus loncat baca 5 file berbeda duluan. Kedua subsection ini WAJIB ada — kalau modul-nya kecil
+dan cuma punya 1 aksi utama, minimal 1 flow tetap wajib didokumentasikan (jangan di-skip dengan
+alasan "cuma 1 aksi doang").
 
 Section boleh ditambah/dikurangi kalau module-nya emang beda karakter (misal gak ada notifikasi
 email sama sekali) — tapi diskusikan dulu ke user sebelum menghapus section baku, dan kalau ada
 section yang dihapus/ditambah, **renumber ulang section sesudahnya** supaya tiap grup tetap
 punya rentang angka nyambung (jangan cuma hapus section-nya terus biarin ada lubang di angka).
 
-Kalau ada cross-reference tertulis di prose (mis. `(lihat §09)`, `(lihat ROI §14)`) dan section-nya
-di-renumber, WAJIB update semua cross-reference itu juga di seluruh dokumen — jangan cuma ganti
-nomor section-nya doang.
+Kalau ada cross-reference tertulis di prose (mis. `(lihat Bagian 09)`, `(lihat ROI Bagian 14)`) dan
+section-nya di-renumber, WAJIB update semua cross-reference itu juga di seluruh dokumen — jangan
+cuma ganti nomor section-nya doang.
+
+**Format cross-reference: tulis "Bagian NN", JANGAN pakai simbol `§`.** Simbol `§` di beberapa
+kombinasi font/browser render kayak ikon/kotak aneh alih-alih karakter biasa — pembaca yang gak
+familiar bisa salah kira itu elemen UI yang rusak. "Bagian 09" lebih portable dan jelas dibaca
+siapa pun.
+
+**Cross-reference internal (ke section lain di dokumen yang sama) WAJIB plain text, JANGAN PERNAH
+dibungkus `<a href="#anchor">`.** Godaan bikin ini clickable itu wajar (dokumennya emang punya
+anchor `id` per section buat sidebar TOC), tapi TSD ini adalah file HTML statis yang lazim dibuka
+langsung dari disk (`file:///...`) atau di-share sebagai file, bukan selalu lewat web server. Kalau
+cross-reference dalam kalimat/bullet dibikin `<a href>`, begitu diklik browser nampilin alamat
+lengkap file lokal (`file:///D:/folder/panjang/.../index.html#gap`) di address bar — bocorin struktur
+folder lokal pembaca dan keliatan berantakan. Sidebar TOC kiri BOLEH dan MEMANG HARUS clickable
+(itu navigasi utama dokumen, beda konteks) — larangan ini spesifik buat cross-reference yang muncul
+di tengah kalimat/bullet body text.
 
 ## 3. Alur Kerja Investigasi
 
@@ -213,7 +257,8 @@ terinstall keduanya read-only buat keperluan generate TSD sehari-hari, lihat atu
   style="display:inline">...</span>` di dalam `<li>`) — CSS-nya didesain buat blok dengan
   border-left+padding, kalau dipaksa inline hasilnya visual glitch (garis vertikal motong tengah
   teks). Kalau cuma butuh cross-reference singkat ke item ROI dari dalam kalimat/bullet, cukup
-  tulis plain text: `(lihat ROI §14)` — tanpa class/span apapun.
+  tulis plain text: `(lihat ROI Bagian 14)` — tanpa class/span/`<a href>` apapun (lihat aturan
+  format cross-reference di bagian 2).
 - `.badge.get` / `.badge.post` — badge HTTP method di tabel API endpoint.
 - **Sidebar TOC dikelompokkan jadi 3 grup collapsible** (`.toc-group` > `.toc-group-toggle` +
   `.toc-sub`), bukan 1 daftar 16 item flat — biar sidebar gak keliatan gamplang. Grouping baku
