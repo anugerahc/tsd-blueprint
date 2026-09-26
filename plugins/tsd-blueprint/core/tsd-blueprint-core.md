@@ -10,60 +10,83 @@ User minta dibuatkan TSD / dokumentasi teknis buat 1 module tertentu dalam sebua
 Kalau module-nya belum jelas atau scope-nya ambigu (lebih dari 1 module, atau "seluruh sistem"),
 STOP dan tanya dulu module mana yang dimaksud — jangan asumsi.
 
-## 0b. Module Besar dengan Banyak Sub-flow — Deteksi &amp; Keputusan Pecah TSD
+## 0b. Deteksi Hierarki Scope — Kapan Pecah Jadi Banyak TSD (generik, rekursif, N-level)
 
-Sebelum mulai investigasi (setelah scope module dikonfirmasi di §0), cek dulu apakah module ini
-sebenarnya payung dari beberapa **sub-flow independen** — bukan 1 alur transaksi tunggal. Kalau
-dipaksa jadi 1 TSD, tiap sub-flow bakal keliatan diringkas/dangkal (alur teknis per aksi jadi
-generic, gak sedetail kalau didokumentasikan sendiri) — ini gap yang harus dihindari.
+**Prinsip:** aturan ini SAMA di level manapun — dari "sistem besar" (superapp berisi banyak module)
+turun ke "module" (berisi banyak sub-flow), turun lagi ke "sub-flow" (berisi banyak sub-sub-flow)
+kalau memang ada, sampai ketemu unit kerja yang genuinely 1 alur transaksi tunggal (**leaf**). Tidak
+ada nama/domain/jumlah-level yang di-hardcode di sini — deteksinya murni dari SINYAL STRUKTUR KODE,
+supaya berlaku sama baik buat project kecil 1 module maupun superapp dengan puluhan module dan
+ratusan sub-module. Proses di bawah ini dievaluasi ulang secara rekursif tiap kali scope yang lagi
+diinvestigasi ternyata masih berisi unit-unit independen di level bawahnya.
 
-**Sinyal kandidat pecah (cukup 2 dari daftar ini buat jadi kandidat kuat):**
-1. Ada 2+ pasangan Controller+Service yang **masing-masing punya state machine/status sendiri
-   yang independen** (bukan cuma variasi CRUD dari flow yang sama) — misal satu punya status
-   `DRAFT→SUBMIT→APPROVE`, yang lain punya `REQ→REVIEW→DONE` yang gak nyambung langsung.
-2. Total baris service tiap sub-flow individually besar (kasar: 1000+ baris per service) dan
-   digabung jadi jauh lebih besar dari TSD module lain yang sudah pernah dibuat di project ini.
-3. Tiap sub-flow punya tabel transaksi header sendiri yang gak di-CRUD sub-flow lain (walau boleh
-   dibaca cross — itu nanti masuk Master Data Dependencies antar sub-TSD, lihat di bawah).
-4. User menyebut nama-nama bagian ini sebagai entitas terpisah secara natural (mis. "VerFor",
-   "Regal", "BPOM Process" disebut beda-beda, bukan "step 1/2/3 dari 1 hal yang sama").
+**Sinyal (baca dari struktur kode yang lagi diinvestigasi, generik — bukan dari nama scope-nya):**
+1. 2+ pasangan Controller+Service dengan **state machine/status independen satu sama lain** (bukan
+   cuma variasi CRUD dari 1 flow yang sama) — mis. satu `DRAFT→SUBMIT→APPROVE`, lain `REQ→REVIEW→DONE`
+   yang gak nyambung langsung.
+2. Ukuran kode per unit besar (kasar: 1000+ baris per service, atau 15+ endpoint per controller) —
+   dan kalau sudah ada TSD lain di project ini sebagai baseline pembanding, unit ini jauh lebih besar
+   dari baseline itu.
+3. Tiap unit punya tabel transaksi header sendiri yang gak di-CRUD unit lain (boleh dibaca cross —
+   itu nanti jadi Master Data Dependencies antar-TSD, lihat aturan dedup di bawah).
+4. Tiap unit punya folder Controller/Service/View/JS TERPISAH RAPI satu sama lain (bukan campur jadi
+   1 folder flat) — sinyal paling mudah dicek duluan sebelum baca isi kode.
 
-**Kalau sinyal ini kuat — WAJIB tanya user dulu sebelum eksekusi, jangan asumsi sendiri:**
-sampaikan sub-flow apa aja yang terdeteksi (nama controller/service masing-masing), dan tawarkan
-2 opsi: (a) 1 TSD gabungan yang meringkas semua sub-flow (cocok kalau user cuma butuh overview
-cepat), atau (b) dipecah jadi N TSD — 1 TSD penuh 16-section per sub-flow, saling link. Kalau user
-gak menyatakan preferensi di awal (misal cuma bilang "buatkan TSD module X"), defaultnya body dulu
-1 TSD gabungan (lebih murah), dan halaman ini dipakai buat evaluasi ulang begitu user kasih feedback
-module-nya "terlalu digabung" — baru pecah retroactive.
+**Keputusan pecah — plugin WAJIB bisa putuskan sendiri, TIDAK selalu berhenti nanya user:**
+- Kalau **≥3 dari 4 sinyal di atas jelas &amp; kuat** (gak butuh interpretasi ambigu, kelihatan
+  langsung dari struktur folder+kode) → **putuskan sendiri buat pecah**, lanjut eksekusi, DAN
+  laporkan keputusannya secara eksplisit ke user sebelum/di awal proses (transparan, bukan diam-diam)
+  — contoh kalimat laporan: "Scope ini kedeteksi punya N unit independen: {daftar nama}. Saya
+  dokumentasikan jadi N TSD terpisah + 1 Overview yang menghubungkan semuanya." User tetap bisa
+  koreksi/override kalau gak setuju dengan pembagian ini.
+- Kalau sinyal cuma 1-2 atau ambigu (gak jelas apakah ini genuinely independen atau cuma variasi
+  dari 1 flow yang sama) → BARU tanya user, jangan asumsi sendiri di kondisi ambigu ini.
+- Kalau user dari awal sudah minta scope spesifik ke 1 unit tertentu (bukan minta level yang lebih
+  besar) → proses langsung sesuai permintaan, skip evaluasi split karena scope-nya sudah leaf.
+- Threshold di atas (1000 baris, 15 endpoint, ≥3 dari 4 sinyal) adalah **heuristik awal, bukan angka
+  sakral** — kalau project punya konvensi ukuran module yang beda jauh (semua module di project ini
+  memang kecil-kecil atau memang besar-besar), sesuaikan penilaian "besar" secara relatif ke baseline
+  project itu sendiri, bukan patokan absolut buta.
 
-**Kalau user pilih pecah jadi N TSD:**
+**Rekursi — ulangi proses ini di level manapun sampai leaf:**
+Begitu 1 unit hasil pecahan dievaluasi dan DIA SENDIRI ternyata masih menunjukkan sinyal yang sama
+kuat (jarang, tapi mungkin di superapp raksasa — misal 1 "module besar" ternyata masih berisi
+beberapa "sub-module besar" yang masing-masing berisi lagi beberapa "sub-flow"), pecah lagi levelnya.
+Berhenti begitu 1 unit genuinely cuma 1 alur transaksi tunggal (leaf) — leaf itu yang dapat TSD
+16-section penuh, bukan level di atasnya.
 
-- Tiap sub-flow dapat 1 TSD **lengkap 16-section** sendiri (bukan versi ringkas) — pakai scaffold
-  `template/` yang sama, folder/nama output sendiri. Konvensi penamaan: `{ModuleName}-{SubFlowName}`
-  (mis. `AKASIA-VerFor`, `AKASIA-Regal`, `AKASIA-BPOMProcess`) supaya grouping-nya jelas dari nama
-  file/folder, tapi tiap dokumen tetap berdiri sendiri (title/cover halaman gak perlu nyebut nomor
-  urut "1 dari 4" — cukup jelas dari nama).
-- **Bagian 13 "Modul Terkait (Internal)" WAJIB saling link antar sub-TSD dalam module besar yang
-  sama** — treat sub-flow lain persis seperti modul terkait biasa (evidence tetap harus konkret:
-  kolom yang eksplisit menunjuk, tabel di-share, atau panggilan controller/service langsung — bukan
-  cuma "sama-sama bagian dari module X"). Link pakai `<a href="../{OtherSubFlow}/index.html">` relatif
-  antar folder output kalau semua diterbitkan di lokasi yang sejajar.
-- **Master Data Dependencies (Bagian 12) yang dipakai 2+ sub-flow: JANGAN diduplikasi full di semua
-  sub-TSD.** Tentukan 1 sub-TSD sebagai "pemilik dokumentasi" tabel master itu — kandidatnya adalah
-  sub-flow yang paling bergantung ke tabel itu (paling sering baca buat kalkulasi/keputusan, atau
-  yang pertama kali butuh detail levelnya di alur kerja investigasi). Sub-TSD pemilik dokumentasikan
-  full (kolom lengkap + Controller/Service + View, sesuai aturan Tier Kritikal di §2 Bagian 12).
-  Sub-TSD lain yang cuma numpang baca tabel yang sama cukup 1 baris ringkas + rujukan eksplisit:
-  `"Detail lengkap lihat TSD {SubFlowName pemilik}, Bagian 12"` (plain text, bukan `<a href>` di
-  tengah kalimat — kecuali ditaruh sebagai link modul terkait di tabel Bagian 13 yang memang boleh
-  clickable). Ini mencegah 1 tabel master didokumentasikan 3x berbeda gara-gara diupdate di 1 tempat
-  doang lalu drift dari yang lain.
-- Section "0. Alur Teknis Lengkap per Aksi" (Bagian 03, lihat §2a) di tiap sub-TSD WAJIB spesifik ke
-  aksi utama sub-flow itu sendiri — jangan generic/diringkas dengan alasan "kan sudah disebut di TSD
-  gabungan sebelumnya". Ini justru alasan utama kenapa dipecah: supaya tiap sub-flow bisa didalami.
-- Opsional (tanya user, jangan bikin sendiri tanpa diminta): 1 halaman "Overview" ringan berisi cuma
-  diagram/tabel peta hubungan antar sub-TSD (bukan TSD 16-section penuh) — kalau user mau punya
-  entry-point tunggal buat module besar itu.
+**Struktur output hierarkis:**
+- **Tiap leaf** = 1 TSD 16-section penuh (scaffold `template/` yang sama). Nama folder/file berantai
+  sesuai kedalaman pecahan sebenarnya: `{Parent}-{Child}` untuk 1 level pecahan, `{Grandparent}-{Parent}-{Child}`
+  kalau memang 2 level pecahan terjadi, dst — JANGAN paksa selalu N-level dalam nama kalau project ini
+  cuma butuh 1 level pecahan (jangan over-engineer penamaan untuk kasus yang gak butuh).
+- **Tiap level yang punya anak (non-leaf)** dapat 1 dokumen **"Overview"** — TIDAK 16-section penuh,
+  cuma: (a) 1 diagram Mermaid `flowchart` tingkat tinggi peta hubungan antar anak-anaknya, (b) 1 tabel
+  daftar anak dengan link `<a href>` ke tiap TSD/Overview anaknya + ringkasan 1-2 kalimat tiap anak,
+  (c) kalau level ini adalah root/E2E (representasi keseluruhan sistem), boleh tambah 1 diagram alur
+  bisnis end-to-end lintas semua module. Overview dibuat kalau ada ≥2 anak di level itu (leaf tunggal
+  gak butuh Overview di atasnya).
+- Overview WAJIB link 2 arah: tiap anak link balik ke Overview parent-nya (breadcrumb 1 baris di
+  bagian atas cover/§01), Overview link ke semua anak langsungnya (bukan cucu — biar gak jadi 1
+  halaman raksasa, navigasi berjenjang sesuai hierarki).
+- Overview HANYA dibuat kalau user setuju/minta, ATAU otomatis dibuat bersamaan saat plugin
+  memutuskan sendiri untuk pecah (kondisi sinyal kuat di atas) — supaya user tetap punya entry-point,
+  jangan pecah jadi N file lepas tanpa cara navigasi antar mereka.
+
+**Cross-cutting concerns (berlaku rekursif di semua level, bukan cuma 1 level tertentu):**
+- Bagian 13 "Modul Terkait (Internal)" — dipakai untuk link antar SIBLING di level manapun (dalam 1
+  parent yang sama, atau lintas parent kalau memang ada bukti kode konkret yang menghubungkan).
+- Master Data Dependencies (Bagian 12) yang dipakai 2+ leaf: JANGAN diduplikasi full di semua leaf.
+  Owner-nya = leaf yang benar-benar CRUD tabel itu (kalau ada); kalau gak ada satupun yang CRUD
+  (tabel murni eksternal/cross-context read-only dari semua leaf), owner-nya = leaf yang paling
+  bergantung (paling sering baca buat kalkulasi/keputusan, atau paling duluan butuh detailnya saat
+  investigasi). Leaf lain cukup 1 baris ringkas + rujukan eksplisit: `"Detail lengkap lihat TSD
+  {NamaLeaf pemilik}, Bagian 12"` (plain text di badan kalimat, boleh clickable kalau ditaruh di
+  tabel Bagian 13). Mencegah 1 tabel master didokumentasikan beda-beda di banyak tempat lalu drift.
+- Section "0. Alur Teknis Lengkap per Aksi" (Bagian 03, §2a) tiap leaf WAJIB spesifik ke aksi
+  leaf itu sendiri — TIDAK boleh diringkas dengan alasan "sudah kebahas di Overview induknya".
+  Overview levelnya beda (ringkasan lintas-unit), bukan pengganti detail teknis per leaf — inilah
+  alasan utama kenapa dipecah, jangan sampai tujuannya gagal karena detailnya tetap diringkas.
 
 ## 1. Aturan Keras (non-negotiable)
 
